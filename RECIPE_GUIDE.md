@@ -4,11 +4,12 @@ This guide will help you create custom brewing recipes for BrewMasters.
 
 ## Table of Contents
 1. [Basic Recipe Structure](#basic-recipe-structure)
-2. [Ingredient Ideas](#ingredient-ideas)
-3. [Color Codes](#color-codes)
-4. [Potion Effects](#potion-effects)
-5. [Advanced Features](#advanced-features)
-6. [Recipe Examples](#recipe-examples)
+2. [Ingredient Formats](#ingredient-formats)
+3. [Ingredient Ideas](#ingredient-ideas)
+4. [Color Codes](#color-codes)
+5. [Potion Effects](#potion-effects)
+6. [Advanced Features](#advanced-features)
+7. [Recipe Examples](#recipe-examples)
 
 ## Basic Recipe Structure
 
@@ -18,7 +19,7 @@ Every recipe follows this structure:
 recipes:
   recipe_id:                    # Unique identifier (use lowercase and underscores)
     base-potion: MATERIAL       # Starting potion type
-    ingredient: MATERIAL        # Item to brew with
+    ingredient: INGREDIENT      # Item to brew with (see Ingredient Formats below)
     brew-time: 400              # Time in ticks (optional, default: 400)
     result:
       name: "&cName"            # Display name with color codes
@@ -34,6 +35,53 @@ recipes:
           duration: 600         # Duration in ticks (20 ticks = 1 second)
           amplifier: 0          # Level (0 = I, 1 = II, etc.)
 ```
+
+## Ingredient Formats
+
+BrewMasters supports three types of ingredients:
+
+### Vanilla Minecraft Items
+Use the material name in all caps:
+```yaml
+ingredient: SOUL_SAND           # Single item
+ingredient: DIAMOND:3           # Requires 3 diamonds
+ingredient: NETHERITE_SCRAP:5   # Requires 5 netherite scraps
+```
+
+### MythicMobs Items
+Use the `mythic:` prefix with the MythicMobs item ID:
+```yaml
+ingredient: mythic:DRAGON_SCALE              # Single MythicMobs item
+ingredient: mythic:MAGIC_DUST:2              # Requires 2 magic dust
+ingredient: mythic:ANCIENT_ARTIFACT:10       # Requires 10 ancient artifacts
+```
+
+**Requirements:**
+- MythicMobs 5.6.1+ must be installed
+- The item ID must match exactly (case-sensitive)
+- Check `/brewmasters integrations` to verify MythicMobs is detected
+
+### Crucible Items
+Use the `crucible:` prefix with the Crucible item ID:
+```yaml
+ingredient: crucible:WISDOM_CRYSTAL          # Single Crucible item
+ingredient: crucible:ANCIENT_RUNE:5          # Requires 5 ancient runes
+ingredient: crucible:ENCHANTED_GEM:3         # Requires 3 enchanted gems
+```
+
+**Requirements:**
+- MythicCrucible 2.2.0+ must be installed
+- The item ID must match exactly (case-sensitive)
+- Check `/brewmasters integrations` to verify Crucible is detected
+
+### Amount Specification
+For all ingredient types, you can specify the required amount:
+- Format: `INGREDIENT:amount`
+- Default amount: 1
+- Examples:
+  - `DIAMOND:3` - Requires 3 diamonds
+  - `mythic:DRAGON_SCALE:5` - Requires 5 dragon scales
+  - `crucible:WISDOM_CRYSTAL:10` - Requires 10 wisdom crystals
 
 ## Ingredient Ideas
 
@@ -76,6 +124,26 @@ recipes:
 - **PHANTOM_MEMBRANE** - Slow falling, flight
 - **SPIDER_EYE** - Poison
 - **FERMENTED_SPIDER_EYE** - Negative effects, corruption
+
+### MythicMobs & Crucible Items
+If you have MythicMobs or Crucible installed, you can use any custom items from those plugins:
+```yaml
+# MythicMobs examples
+ingredient: mythic:DRAGON_SCALE
+ingredient: mythic:MAGIC_DUST:2
+ingredient: mythic:ANCIENT_ARTIFACT
+
+# Crucible examples
+ingredient: crucible:WISDOM_CRYSTAL
+ingredient: crucible:ENCHANTED_GEM:3
+ingredient: crucible:ANCIENT_RUNE:5
+```
+
+**Benefits:**
+- Create unique recipes using your custom items
+- Integrate brewing with your custom item economy
+- Make legendary potions require legendary ingredients
+- Perfect for RPG servers with custom items
 
 ## Color Codes
 

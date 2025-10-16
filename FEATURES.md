@@ -76,13 +76,17 @@ See **CONDITIONS_GUIDE.md** for complete documentation!
 
 ### ✅ Unique Ingredients
 Support for any Minecraft material including:
-- **Nether Materials**: Soul Sand, Soul Soil, Netherite Scrap, Crying Obsidian, Wither Rose
-- **End Materials**: Ender Pearl, Chorus Fruit, Shulker Shell, Dragon Breath
-- **Deep Dark**: Echo Shard, Sculk
-- **Ocean**: Prismarine Shard, Heart of the Sea, Nautilus Shell
-- **Rare Materials**: Amethyst Shard, Diamond, Emerald, Gold, Iron
-- **Nature**: Rabbit Foot, Phantom Membrane, Spider Eye
-- And literally any other Minecraft item!
+- **Vanilla Materials**:
+  - **Nether Materials**: Soul Sand, Soul Soil, Netherite Scrap, Crying Obsidian, Wither Rose
+  - **End Materials**: Ender Pearl, Chorus Fruit, Shulker Shell, Dragon Breath
+  - **Deep Dark**: Echo Shard, Sculk
+  - **Ocean**: Prismarine Shard, Heart of the Sea, Nautilus Shell
+  - **Rare Materials**: Amethyst Shard, Diamond, Emerald, Gold, Iron
+  - **Nature**: Rabbit Foot, Phantom Membrane, Spider Eye
+  - And literally any other Minecraft item!
+- **MythicMobs Items**: Use custom items from MythicMobs as brewing ingredients
+- **Crucible Items**: Use custom items from MythicCrucible as brewing ingredients
+- **Amount Support**: Require multiple items for powerful recipes (e.g., `DIAMOND:3`, `mythic:DRAGON_SCALE:5`)
 
 ### ✅ Configuration
 - YAML-based configuration
@@ -94,6 +98,7 @@ Support for any Minecraft material including:
 ### ✅ Commands & Permissions
 - `/brewmasters reload` - Reload configuration
 - `/brewmasters list` - List all recipes with details
+- `/brewmasters integrations` - Show MythicMobs/Crucible integration status
 - `/brewmasters help` - Show help
 - Aliases: `/bm`, `/brew`
 - Permission-based access control
@@ -112,6 +117,9 @@ Support for any Minecraft material including:
 - Java 17+
 - Gradle build system
 - Shadow plugin for dependency shading
+- Optional integration with MythicMobs 5.6.1+
+- Optional integration with MythicCrucible 2.2.0+
+- Optional integration with PlaceholderAPI
 
 ### Performance
 - Efficient recipe matching
@@ -240,8 +248,8 @@ Potential features for future versions:
 
 ## Plugin Statistics
 
-- **Lines of Code**: ~1000+
-- **Classes**: 6
+- **Lines of Code**: ~3000+
+- **Classes**: 36
 - **Configuration Options**: 10+
 - **Supported Effects**: 30+
 - **Example Recipes**: 20+

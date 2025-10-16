@@ -14,6 +14,7 @@ A Spigot/Paper plugin that allows you to define custom brewing and alchemy recip
 - 🎯 **Custom Model Data** - Support for resource pack custom models
 - 🔄 **Hot Reload** - Reload configuration without restarting the server
 - 🌟 **Unique Ingredients** - Use any material as an ingredient (soul sand, netherite, echo shards, etc.)
+- 🎭 **MythicMobs & Crucible Support** - Use custom items from MythicMobs and Crucible as brewing ingredients
 - 🎯 **Recipe Conditions** - Restrict recipes by biome, world, permission, time, weather, Y-level, and PlaceholderAPI
 - 🔌 **PlaceholderAPI Support** - Advanced conditions using player stats, economy, ranks, and more
 
@@ -21,6 +22,12 @@ A Spigot/Paper plugin that allows you to define custom brewing and alchemy recip
 
 - Java 17 or higher
 - Spigot or Paper 1.20.1+ (may work on other versions)
+
+## Optional Dependencies
+
+- **MythicMobs** 5.6.1+ - Use MythicMobs items as brewing ingredients
+- **MythicCrucible** 2.2.0+ - Use Crucible items as brewing ingredients
+- **PlaceholderAPI** - Advanced recipe conditions
 
 ## Installation
 
@@ -108,7 +115,10 @@ recipes:
 ### Configuration Options
 
 - **base-potion**: The potion type to start with (e.g., WATER_BOTTLE, AWKWARD_POTION, POTION, SPLASH_POTION, LINGERING_POTION)
-- **ingredient**: The item to brew with (any Minecraft material: SOUL_SAND, NETHERITE_SCRAP, ECHO_SHARD, DIAMOND, etc.)
+- **ingredient**: The item to brew with
+  - Vanilla: `MATERIAL_NAME` or `MATERIAL_NAME:amount` (e.g., `SOUL_SAND`, `DIAMOND:3`)
+  - MythicMobs: `mythic:ITEM_ID` or `mythic:ITEM_ID:amount` (e.g., `mythic:DRAGON_SCALE`, `mythic:MAGIC_DUST:2`)
+  - Crucible: `crucible:ITEM_ID` or `crucible:ITEM_ID:amount` (e.g., `crucible:WISDOM_CRYSTAL`, `crucible:ANCIENT_RUNE:5`)
 - **brew-time**: Time in ticks (20 ticks = 1 second, default: 400)
 - **result.name**: Display name with color codes (&)
 - **result.lore**: List of lore lines with color codes
@@ -137,6 +147,7 @@ SPEED, SLOWNESS, HASTE, MINING_FATIGUE, STRENGTH, INSTANT_HEALTH, INSTANT_DAMAGE
 
 - `/brewmasters reload` - Reload the configuration
 - `/brewmasters list` - List all custom recipes
+- `/brewmasters integrations` - Show integration status (MythicMobs, Crucible)
 - `/brewmasters help` - Show help message
 
 Aliases: `/bm`, `/brew`

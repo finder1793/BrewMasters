@@ -216,17 +216,62 @@ Common colors for potions:
 
 - `/brewmasters reload` - Reload config (use after editing recipes)
 - `/brewmasters list` - Show all loaded recipes
+- `/brewmasters integrations` - Check MythicMobs/Crucible integration status
 - `/brewmasters help` - Show help
 
 Shortcuts: `/bm` or `/brew`
+
+## Using MythicMobs or Crucible Items
+
+If you have MythicMobs or Crucible installed, you can use custom items as ingredients!
+
+### MythicMobs Example
+```yaml
+mythic_dragon_potion:
+  base-potion: AWKWARD_POTION
+  ingredient: mythic:DRAGON_SCALE:3  # Requires 3 dragon scales
+  result:
+    name: "&c&lDragon's Fury"
+    color: "#FF4500"
+    glowing: true
+    effects:
+      - type: STRENGTH
+        duration: 3600
+        amplifier: 2
+      - type: FIRE_RESISTANCE
+        duration: 6000
+        amplifier: 0
+```
+
+### Crucible Example
+```yaml
+crucible_wisdom_potion:
+  base-potion: AWKWARD_POTION
+  ingredient: crucible:WISDOM_CRYSTAL:5  # Requires 5 wisdom crystals
+  result:
+    name: "&b&lPotion of Wisdom"
+    color: "#00BFFF"
+    glowing: true
+    effects:
+      - type: LUCK
+        duration: 4800
+        amplifier: 2
+      - type: NIGHT_VISION
+        duration: 4800
+        amplifier: 0
+```
+
+**Check Integration Status:**
+Run `/brewmasters integrations` to see if MythicMobs and Crucible are detected.
 
 ## Next Steps
 
 1. ✅ Create your first recipe
 2. ✅ Test it in-game
-3. 📖 Read `RECIPE_GUIDE.md` for advanced features
-4. 🎨 Check `example-recipes.yml` for more ideas
-5. 🚀 Create your own unique potions!
+3. 🎭 Try MythicMobs/Crucible ingredients (if installed)
+4. 📖 Read `RECIPE_GUIDE.md` for advanced features
+5. 🎨 Check `example-recipes.yml` for more ideas
+6. 🚀 Create your own unique potions!
 
 ## Need Help?
 

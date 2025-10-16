@@ -2,6 +2,65 @@
 
 All notable changes to BrewMasters will be documented in this file.
 
+## [1.2.0] - 2025-10-16
+
+### Added - MythicMobs & Crucible Integration 🎭
+
+- **MythicMobs Support** - Use MythicMobs items as brewing ingredients
+  - Format: `mythic:ITEM_ID` or `mythic:ITEM_ID:amount`
+  - Example: `mythic:DRAGON_SCALE:3` requires 3 dragon scales
+  - Soft dependency - works without MythicMobs installed
+  - Compatible with MythicMobs 5.6.1+
+
+- **Crucible Support** - Use Crucible items as brewing ingredients
+  - Format: `crucible:ITEM_ID` or `crucible:ITEM_ID:amount`
+  - Example: `crucible:WISDOM_CRYSTAL:5` requires 5 wisdom crystals
+  - Soft dependency - works without Crucible installed
+  - Compatible with MythicCrucible 2.2.0+
+
+- **Ingredient Amount System** - Require multiple items for powerful recipes
+  - Works with vanilla, MythicMobs, and Crucible ingredients
+  - Format: `INGREDIENT:amount`
+  - Examples: `DIAMOND:3`, `mythic:MAGIC_DUST:2`, `crucible:ANCIENT_RUNE:5`
+
+- **Integration Status Command** - `/brewmasters integrations`
+  - Shows which plugins are detected and available
+  - Displays supported ingredient formats
+  - Helps troubleshoot integration issues
+
+### Added - Ingredient System Architecture
+
+- **BrewingIngredient Interface** - Abstract base for all ingredient types
+- **VanillaIngredient** - Handles vanilla Minecraft materials
+- **MythicMobsIngredient** - Handles MythicMobs items with runtime detection
+- **CrucibleIngredient** - Handles Crucible items with runtime detection
+- **IngredientFactory** - Parses ingredient strings and creates appropriate types
+- **IntegrationUtils** - Utility class for checking plugin availability
+
+### Changed
+
+- Updated `BrewingRecipe` to use `BrewingIngredient` instead of `Material`
+- Updated `RecipeManager` to parse ingredients using `IngredientFactory`
+- Updated `BrewingListener` to match ingredients using new system
+- Updated `RecipeBookGUI` and `RecipeDetailsGUI` to display ingredient names correctly
+- Added MythicMobs and Crucible to soft dependencies in plugin.yml
+- Added Lumine Maven repository to build.gradle
+
+### Documentation
+
+- Updated **README.md** with MythicMobs/Crucible information
+- Updated **FEATURES.md** with integration details
+- Updated **RECIPE_GUIDE.md** with ingredient format section
+- Updated **QUICKSTART.md** with MythicMobs/Crucible examples
+- Added ingredient format examples to config.yml
+
+### Technical
+
+- Uses BukkitAdapter for converting MythicMobs AbstractItemStack to Bukkit ItemStack
+- Runtime plugin detection using Class.forName() and plugin manager
+- Graceful degradation when MythicMobs/Crucible not installed
+- Proper error handling for missing items or invalid IDs
+
 ## [1.1.0] - 2025-10-14
 
 ### Added - Recipe Conditions System 🎯
