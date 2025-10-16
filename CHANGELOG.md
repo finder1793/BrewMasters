@@ -2,6 +2,163 @@
 
 All notable changes to BrewMasters will be documented in this file.
 
+## [1.4.0] - 2025-10-16
+
+### Added - Brewing Statistics & PlaceholderAPI Integration 📊
+
+- **Comprehensive Statistics Tracking** - Track all brewing activity per player
+  - Total potions brewed
+  - Per-recipe brew counts
+  - Recipes discovered count
+  - Achievements unlocked count
+  - Brewing chains completed
+  - Custom statistics support
+
+- **Brewing Rank System** - 10-tier automatic progression system
+  - Newcomer (0-9 potions)
+  - Beginner (10-49)
+  - Novice (50-99)
+  - Apprentice (100-249)
+  - Skilled (250-499)
+  - Proficient (500-999)
+  - Adept (1,000-2,499)
+  - Expert (2,500-4,999)
+  - Master (5,000-9,999)
+  - Grandmaster (10,000+)
+
+- **PlaceholderAPI Expansion** - 35+ placeholders for brewing stats
+  - General statistics (total brewed, recipes discovered, achievements)
+  - Rank and progression (brewing rank, discovery %, achievement %)
+  - Per-recipe statistics (brew count, discovery status)
+  - Achievement checks (unlocked status)
+  - Chain progress (completion status)
+  - Active potion effect timers (time remaining, formatted time, active status)
+  - Custom statistics support
+
+- **Enhanced PlayerData Model** - Convenience methods for statistics
+  - `getTotalPotionsBrewed()` - Total brewing count
+  - `getTotalRecipesDiscovered()` - Discovery tracking
+  - `getTotalAchievements()` - Achievement count
+  - `getBrewingRank()` - Dynamic rank calculation
+  - `getDiscoveryPercentage()` - Progress calculation
+  - `getRecipeBrewCount()` - Per-recipe statistics
+  - `getAchievementPercentage()` - Completion tracking
+
+### Added - Potion Command Execution System ⚡
+
+- **Drink Commands** - Execute commands when potions are consumed
+  - Run immediately when player drinks potion
+  - Support for console and player commands
+  - Placeholder support for player data
+  - Perfect for granting temporary permissions, teleportation, rewards
+
+- **Expire Commands** - Execute commands when potion effects wear off
+  - Automatically triggered when longest effect expires
+  - Works even if player logs out (runs on next login)
+  - Support for console and player commands
+  - Perfect for removing permissions, debuffs, notifications
+
+- **Active Effect Tracking** - Track active custom potion effects
+  - Persistent storage in `active-effects.yml`
+  - Automatic expiration checking (every second)
+  - Offline player support - effects tracked while logged out
+  - Time remaining calculations (seconds and MM:SS format)
+
+- **Command Syntax Features**
+  - `[console]` prefix - Execute as console (most reliable)
+  - `[player]` prefix - Execute as player
+  - No prefix - Defaults to console
+  - Placeholders: `{player}`, `{uuid}`, `{recipe_id}`, `{recipe_name}`
+
+- **PotionEffectManager** - New manager for effect tracking
+  - Handles drink command execution
+  - Handles expire command execution
+  - Manages active effects across all players
+  - Automatic cleanup and persistence
+
+- **PotionDrinkListener** - Detects potion consumption
+  - Matches consumed potions to recipes
+  - Triggers command execution
+  - Works with regular, splash, and lingering potions
+
+- **Offline Effect Handling** - Robust logout/login support
+  - Effects continue counting down while offline
+  - Expire commands execute on login if expired
+  - Prevents exploits and ensures consistency
+
+### Added - Documentation
+
+- **PLACEHOLDERS.md** - Complete PlaceholderAPI documentation
+  - 35+ placeholder examples
+  - Usage examples for popular plugins (FeatherBoard, TAB, DeluxeMenus, etc.)
+  - Integration guides for chat, scoreboards, holograms, boss bars
+  - Testing instructions
+
+- **COMMANDS_GUIDE.md** - Comprehensive command system guide (400+ lines)
+  - Complete syntax documentation
+  - 10+ detailed real-world examples:
+    - Temporary permission groups (VIP systems)
+    - Warrior transformations
+    - Economy integration (loans, rewards)
+    - Arena teleportation systems
+    - Quest progression
+    - Parkour timers
+    - Boss battle mechanics
+    - Mining expeditions
+    - Flight systems
+  - PlaceholderAPI integration examples
+  - Troubleshooting guide
+
+- **example-command-recipes.yml** - 10 ready-to-use command recipes
+  - VIP boost potion
+  - Elite warrior transformation
+  - Lucky fortune (economy)
+  - Arena challenger
+  - Enlightenment (quests)
+  - Parkour master
+  - Berserker rage
+  - Creative flight
+  - Miner's blessing
+
+### Changed
+
+- Updated `BrewingRecipe` to support drink-commands and expire-commands
+- Updated `RecipeManager` to parse command lists from config
+- Updated `PlayerListener` to handle expired effects on login
+- Updated `BrewMastersExpansion` with 3 new placeholder types for active effects
+- Updated `BrewMasters` main class to initialize PotionEffectManager
+- Enhanced `PlayerData` with statistics convenience methods
+
+### Technical
+
+- **New Classes**: 4
+  - `ActivePotionEffect` - Effect data model with time tracking
+  - `PotionEffectManager` - Effect tracking and command execution
+  - `PotionDrinkListener` - Potion consumption detection
+  - `BrewMastersExpansion` - PlaceholderAPI integration
+
+- **Effect Tracking**
+  - Expiration checking runs every second (20 ticks)
+  - Effect duration based on longest potion effect in recipe
+  - Data persisted to `active-effects.yml`
+  - Commands executed async to prevent lag
+
+- **Statistics**
+  - Automatic tracking of all brewing activity
+  - Per-player data storage
+  - Integration with existing PlayerData system
+  - Real-time placeholder updates
+
+### Plugin Statistics
+
+- Lines of Code: ~11,000+ (was ~10,000+)
+- Java Classes: 43 (was 40)
+- Managers: 7 (added PotionEffectManager)
+- Listeners: 4 (added PotionDrinkListener)
+- Model Classes: 9 (added ActivePotionEffect)
+- PlaceholderAPI Placeholders: 35+ (was 0)
+- Documentation Pages: 9 (added PLACEHOLDERS.md, COMMANDS_GUIDE.md)
+
 ## [1.2.0] - 2025-10-16
 
 ### Added - MythicMobs & Crucible Integration 🎭
