@@ -222,9 +222,9 @@ explorer_brew:
 ## Future Enhancement Ideas
 
 Potential features for future versions:
-- [ ] Recipe discovery system
+- [x] Recipe discovery system
 - [ ] Brewing achievements
-- [ ] Recipe books/GUI
+- [x] Recipe books/GUI
 - [ ] Brewing skill levels
 - [ ] Particle effects on brewing
 - [ ] Sound effects customization
@@ -233,10 +233,10 @@ Potential features for future versions:
 - [ ] Import/export recipes
 - [ ] Recipe sharing system
 - [ ] Brewing statistics
-- [ ] Custom brewing stand speeds
-- [ ] Multi-step brewing chains
-- [ ] Conditional recipes (permissions, time, location)
-- [ ] Potion crafting (without brewing stand)
+- [x] Custom brewing stand speeds
+- [x] Multi-step brewing chains
+- [x] Conditional recipes (permissions, time, location)
+
 
 ## Plugin Statistics
 
