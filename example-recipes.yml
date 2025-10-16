@@ -1,0 +1,575 @@
+# BrewMasters - Example Recipes
+# This file contains additional recipe examples you can copy to your config.yml
+#
+# NEW: Recipe Conditions System!
+# See CONDITIONS_GUIDE.md for complete documentation on:
+# - Biome conditions (desert-only, nether-only, etc.)
+# - World conditions (specific dimensions)
+# - Permission conditions (VIP/rank-based recipes)
+# - Time conditions (day/night cycles)
+# - Weather conditions (rain, thunder, clear)
+# - Y-level conditions (underground, high altitude)
+# - PlaceholderAPI conditions (level, economy, custom stats)
+
+recipes:
+  # ===== SOUL-BASED POTIONS =====
+  
+  # Soul Sand - Necromantic Power
+  necromantic_brew:
+    base-potion: AWKWARD_POTION
+    ingredient: SOUL_SAND
+    brew-time: 700
+    result:
+      name: "&8&lNecromantic Brew"
+      lore:
+        - "&7Harness the power of trapped souls"
+        - "&7Grants dark powers at a cost"
+        - "&5Epic"
+      color: "#1A1A1A"
+      glowing: true
+      effects:
+        - type: WITHER
+          duration: 400
+          amplifier: 0
+        - type: STRENGTH
+          duration: 2400
+          amplifier: 2
+        - type: RESISTANCE
+          duration: 2400
+          amplifier: 1
+        - type: HUNGER
+          duration: 2400
+          amplifier: 1
+
+  # Soul Soil - Spirit Walker
+  spirit_walker:
+    base-potion: AWKWARD_POTION
+    ingredient: SOUL_SOIL
+    brew-time: 500
+    result:
+      name: "&b&lSpirit Walker's Essence"
+      lore:
+        - "&7Walk among the spirits"
+        - "&7Enhanced movement on soul terrain"
+      color: "#4A4A4A"
+      effects:
+        - type: SPEED
+          duration: 3600
+          amplifier: 2
+        - type: JUMP_BOOST
+          duration: 3600
+          amplifier: 2
+        - type: SLOW_FALLING
+          duration: 3600
+          amplifier: 0
+
+  # ===== RARE MATERIAL POTIONS =====
+  
+  # Crying Obsidian - Tears of the Nether
+  nether_tears:
+    base-potion: AWKWARD_POTION
+    ingredient: CRYING_OBSIDIAN
+    brew-time: 900
+    result:
+      name: "&5&lTears of the Nether"
+      lore:
+        - "&7Crystallized sorrow from the void"
+        - "&7Grants protection and regeneration"
+        - "&6Legendary"
+      color: "#8B008B"
+      glowing: true
+      effects:
+        - type: FIRE_RESISTANCE
+          duration: 6000
+          amplifier: 0
+        - type: RESISTANCE
+          duration: 3600
+          amplifier: 1
+        - type: REGENERATION
+          duration: 2400
+          amplifier: 1
+        - type: ABSORPTION
+          duration: 2400
+          amplifier: 2
+
+  # Sculk - Deep Dark Essence
+  sculk_essence:
+    base-potion: AWKWARD_POTION
+    ingredient: SCULK
+    brew-time: 800
+    result:
+      name: "&0&lDeep Dark Essence"
+      lore:
+        - "&7Infused with the power of the depths"
+        - "&7Grants stealth and perception"
+        - "&3Mythic"
+      color: "#0A3A3A"
+      glowing: true
+      effects:
+        - type: NIGHT_VISION
+          duration: 9600
+          amplifier: 0
+        - type: INVISIBILITY
+          duration: 1800
+          amplifier: 0
+        - type: SPEED
+          duration: 2400
+          amplifier: 1
+
+  # Prismarine Shard - Ocean's Blessing
+  ocean_blessing:
+    base-potion: AWKWARD_POTION
+    ingredient: PRISMARINE_SHARD
+    brew-time: 600
+    result:
+      name: "&b&lOcean's Blessing"
+      lore:
+        - "&7Blessed by the ocean monuments"
+        - "&7Master the seas"
+      color: "#20B2AA"
+      effects:
+        - type: WATER_BREATHING
+          duration: 9600
+          amplifier: 0
+        - type: DOLPHINS_GRACE
+          duration: 4800
+          amplifier: 0
+        - type: NIGHT_VISION
+          duration: 4800
+          amplifier: 0
+
+  # ===== COMBAT POTIONS =====
+  
+  # Wither Rose - Death's Touch
+  deaths_touch:
+    base-potion: AWKWARD_POTION
+    ingredient: WITHER_ROSE
+    brew-time: 1000
+    result:
+      name: "&8&lDeath's Touch"
+      lore:
+        - "&7Infused with withering death"
+        - "&7Deadly to all who oppose you"
+        - "&4Dangerous"
+      color: "#2F2F2F"
+      glowing: true
+      effects:
+        - type: WITHER
+          duration: 1200
+          amplifier: 2
+        - type: STRENGTH
+          duration: 2400
+          amplifier: 1
+
+  # Blaze Rod - Inferno
+  inferno_potion:
+    base-potion: AWKWARD_POTION
+    ingredient: BLAZE_ROD
+    brew-time: 700
+    result:
+      name: "&6&lInferno Elixir"
+      lore:
+        - "&7Burn with the fury of the Nether"
+        - "&7Grants immense power"
+      color: "#FF4500"
+      glowing: true
+      effects:
+        - type: FIRE_RESISTANCE
+          duration: 4800
+          amplifier: 0
+        - type: STRENGTH
+          duration: 2400
+          amplifier: 2
+        - type: HASTE
+          duration: 2400
+          amplifier: 1
+
+  # ===== UTILITY POTIONS =====
+  
+  # Rabbit's Foot - Lucky Leap
+  lucky_leap:
+    base-potion: AWKWARD_POTION
+    ingredient: RABBIT_FOOT
+    brew-time: 500
+    result:
+      name: "&a&lPotion of Lucky Leaps"
+      lore:
+        - "&7Bounce with fortune's favor"
+      color: "#7FFF00"
+      effects:
+        - type: JUMP_BOOST
+          duration: 3600
+          amplifier: 2
+        - type: LUCK
+          duration: 6000
+          amplifier: 1
+        - type: SLOW_FALLING
+          duration: 3600
+          amplifier: 0
+
+  # Phantom Membrane - Phantom Flight
+  phantom_flight:
+    base-potion: AWKWARD_POTION
+    ingredient: PHANTOM_MEMBRANE
+    brew-time: 800
+    result:
+      name: "&7&lPhantom Flight"
+      lore:
+        - "&7Soar like the phantoms of the night"
+        - "&fRare"
+      color: "#C0C0C0"
+      effects:
+        - type: SLOW_FALLING
+          duration: 4800
+          amplifier: 0
+        - type: LEVITATION
+          duration: 100
+          amplifier: 1
+        - type: NIGHT_VISION
+          duration: 4800
+          amplifier: 0
+
+  # ===== SPLASH POTIONS =====
+  
+  # Splash Poison
+  splash_poison:
+    base-potion: SPLASH_POTION
+    ingredient: SPIDER_EYE
+    brew-time: 400
+    result:
+      name: "&2Splash Potion of Poison"
+      lore:
+        - "&7Throw to poison enemies"
+      color: "#4E9A06"
+      potion-type: SPLASH
+      effects:
+        - type: POISON
+          duration: 900
+          amplifier: 1
+
+  # Splash Slowness
+  splash_slowness:
+    base-potion: SPLASH_POTION
+    ingredient: TURTLE_HELMET
+    brew-time: 400
+    result:
+      name: "&7Splash Potion of Slowness"
+      lore:
+        - "&7Throw to slow enemies"
+      color: "#5A6C81"
+      potion-type: SPLASH
+      effects:
+        - type: SLOWNESS
+          duration: 1800
+          amplifier: 2
+
+  # ===== LINGERING POTIONS =====
+  
+  # Lingering Regeneration
+  lingering_regen:
+    base-potion: LINGERING_POTION
+    ingredient: GHAST_TEAR
+    brew-time: 600
+    result:
+      name: "&d&lLingering Potion of Regeneration"
+      lore:
+        - "&7Creates a healing cloud"
+      color: "#CD5CAB"
+      potion-type: LINGERING
+      effects:
+        - type: REGENERATION
+          duration: 900
+          amplifier: 1
+
+  # Lingering Resistance
+  lingering_resistance:
+    base-potion: LINGERING_POTION
+    ingredient: IRON_BLOCK
+    brew-time: 700
+    result:
+      name: "&7&lLingering Potion of Resistance"
+      lore:
+        - "&7Creates a protective cloud"
+      color: "#99A3A4"
+      potion-type: LINGERING
+      glowing: true
+      effects:
+        - type: RESISTANCE
+          duration: 900
+          amplifier: 2
+
+  # ===== CONDITIONAL RECIPES =====
+
+  # Ocean Depths Potion (Ocean biomes only)
+  ocean_depths:
+    base-potion: AWKWARD_POTION
+    ingredient: HEART_OF_THE_SEA
+    brew-time: 900
+    result:
+      name: "&b&lPotion of Ocean Depths"
+      lore:
+        - "&7Can only be brewed in ocean biomes"
+        - "&7Grants mastery over water"
+        - "&3Mythic"
+      color: "#006994"
+      glowing: true
+      effects:
+        - type: WATER_BREATHING
+          duration: 12000
+          amplifier: 0
+        - type: DOLPHINS_GRACE
+          duration: 6000
+          amplifier: 1
+        - type: NIGHT_VISION
+          duration: 12000
+          amplifier: 0
+    conditions:
+      biomes:
+        - OCEAN
+        - DEEP_OCEAN
+        - WARM_OCEAN
+        - COLD_OCEAN
+        - FROZEN_OCEAN
+      biomes-whitelist: true
+
+  # Crimson Forest Brew (Nether biome specific)
+  crimson_forest_brew:
+    base-potion: AWKWARD_POTION
+    ingredient: CRIMSON_FUNGUS
+    brew-time: 800
+    result:
+      name: "&c&lCrimson Forest Brew"
+      lore:
+        - "&7Must be brewed in Crimson Forest"
+        - "&5Epic"
+      color: "#DC143C"
+      glowing: true
+      effects:
+        - type: FIRE_RESISTANCE
+          duration: 9600
+          amplifier: 0
+        - type: STRENGTH
+          duration: 3600
+          amplifier: 2
+    conditions:
+      biomes:
+        - CRIMSON_FOREST
+      biomes-whitelist: true
+
+  # End Dimension Potion (The End only)
+  void_walker:
+    base-potion: AWKWARD_POTION
+    ingredient: CHORUS_FRUIT
+    brew-time: 1000
+    result:
+      name: "&5&lVoid Walker's Elixir"
+      lore:
+        - "&7Can only be brewed in The End"
+        - "&7Grants power over the void"
+        - "&6&lLegendary"
+      color: "#8B008B"
+      glowing: true
+      effects:
+        - type: SLOW_FALLING
+          duration: 6000
+          amplifier: 0
+        - type: LEVITATION
+          duration: 200
+          amplifier: 0
+        - type: RESISTANCE
+          duration: 6000
+          amplifier: 2
+    conditions:
+      worlds:
+        - world_the_end
+      worlds-whitelist: true
+
+  # Sunrise Potion (Dawn only)
+  sunrise_elixir:
+    base-potion: AWKWARD_POTION
+    ingredient: SUNFLOWER
+    brew-time: 600
+    result:
+      name: "&e&lSunrise Elixir"
+      lore:
+        - "&7Can only be brewed at dawn"
+        - "&7Time: 23000-1000 ticks"
+      color: "#FFD700"
+      effects:
+        - type: REGENERATION
+          duration: 2400
+          amplifier: 1
+        - type: ABSORPTION
+          duration: 2400
+          amplifier: 1
+    conditions:
+      time:
+        min: 23000
+        max: 1000
+
+  # Rainy Day Potion (Rain required)
+  rain_blessing:
+    base-potion: AWKWARD_POTION
+    ingredient: LILY_PAD
+    brew-time: 500
+    result:
+      name: "&9&lRain Blessing"
+      lore:
+        - "&7Can only be brewed during rain"
+      color: "#4169E1"
+      effects:
+        - type: SPEED
+          duration: 3600
+          amplifier: 1
+        - type: LUCK
+          duration: 6000
+          amplifier: 1
+    conditions:
+      weather: RAIN
+
+  # Sky High Potion (High altitude required)
+  sky_high_brew:
+    base-potion: AWKWARD_POTION
+    ingredient: FEATHER
+    brew-time: 600
+    result:
+      name: "&f&lSky High Brew"
+      lore:
+        - "&7Must be brewed at high altitude"
+        - "&7Y-level: 128-320"
+      color: "#87CEEB"
+      effects:
+        - type: SLOW_FALLING
+          duration: 6000
+          amplifier: 0
+        - type: JUMP_BOOST
+          duration: 3600
+          amplifier: 3
+    conditions:
+      y-level:
+        min: 128
+        max: 320
+
+  # VIP Exclusive Potion (Permission required)
+  vip_exclusive:
+    base-potion: AWKWARD_POTION
+    ingredient: DIAMOND
+    brew-time: 800
+    result:
+      name: "&b&lVIP Exclusive Brew"
+      lore:
+        - "&7Requires VIP permission"
+        - "&fRare"
+      color: "#00CED1"
+      glowing: true
+      effects:
+        - type: LUCK
+          duration: 6000
+          amplifier: 3
+        - type: HASTE
+          duration: 3600
+          amplifier: 2
+    conditions:
+      permission: brewmasters.vip
+      permission-required: true
+
+  # High Level Potion (PlaceholderAPI - Level 75+)
+  expert_brew:
+    base-potion: AWKWARD_POTION
+    ingredient: ENCHANTED_GOLDEN_APPLE
+    brew-time: 1000
+    result:
+      name: "&6&lExpert's Brew"
+      lore:
+        - "&7Requires level 75+"
+        - "&6&lLegendary"
+      color: "#FFD700"
+      glowing: true
+      effects:
+        - type: REGENERATION
+          duration: 2400
+          amplifier: 2
+        - type: ABSORPTION
+          duration: 2400
+          amplifier: 4
+        - type: RESISTANCE
+          duration: 2400
+          amplifier: 1
+    conditions:
+      placeholders:
+        - placeholder: "%player_level%"
+          operator: ">="
+          value: "75"
+
+  # Rich Player Potion (PlaceholderAPI - Economy)
+  millionaire_brew:
+    base-potion: AWKWARD_POTION
+    ingredient: EMERALD_BLOCK
+    brew-time: 900
+    result:
+      name: "&2&lMillionaire's Brew"
+      lore:
+        - "&7Requires $1,000,000 balance"
+        - "&6&lLegendary"
+      color: "#50C878"
+      glowing: true
+      effects:
+        - type: LUCK
+          duration: 12000
+          amplifier: 5
+    conditions:
+      placeholders:
+        - placeholder: "%vault_eco_balance%"
+          operator: ">="
+          value: "1000000"
+
+  # Ultimate Challenge (Multiple conditions)
+  ultimate_challenge:
+    base-potion: AWKWARD_POTION
+    ingredient: NETHER_STAR
+    brew-time: 1200
+    result:
+      name: "&5&l&kU&r &5&lUltimate Brew&r &5&l&kU"
+      lore:
+        - "&7Requires ALL of the following:"
+        - "&7- Must be in The End"
+        - "&7- Must be at night"
+        - "&7- Must have master permission"
+        - "&7- Must be level 100+"
+        - "&6&lLegendary"
+      color: "#9400D3"
+      glowing: true
+      custom-model-data: 1
+      effects:
+        - type: REGENERATION
+          duration: 6000
+          amplifier: 3
+        - type: RESISTANCE
+          duration: 6000
+          amplifier: 3
+        - type: STRENGTH
+          duration: 6000
+          amplifier: 3
+        - type: SPEED
+          duration: 6000
+          amplifier: 2
+        - type: ABSORPTION
+          duration: 6000
+          amplifier: 5
+        - type: LUCK
+          duration: 12000
+          amplifier: 5
+    conditions:
+      worlds:
+        - world_the_end
+      worlds-whitelist: true
+      time:
+        min: 13000
+        max: 23000
+      permission: brewmasters.recipe.ultimate
+      permission-required: true
+      placeholders:
+        - placeholder: "%player_level%"
+          operator: ">="
+          value: "100"
+

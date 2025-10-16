@@ -1,0 +1,52 @@
+name: BrewMasters
+version: '${version}'
+main: net.pwing.brewmasters.BrewMasters
+api-version: '1.20'
+author: finder17
+description: Custom brewing and alchemy recipes with custom effects and colors
+softdepend: [PlaceholderAPI, MythicMobs, MythicCrucible]
+
+commands:
+  brewmasters:
+    description: Main BrewMasters command
+    usage: /<command> [reload|list|recipes [gui]|achievements [gui]|discover|speed|chains|chain|help]
+    aliases: [bm, brew]
+
+permissions:
+  brewmasters.admin:
+    description: Access to all BrewMasters commands
+    default: op
+  brewmasters.reload:
+    description: Reload plugin configuration
+    default: op
+  brewmasters.list:
+    description: List all custom recipes
+    default: op
+  brewmasters.recipes:
+    description: View discovered recipes
+    default: true
+  brewmasters.achievements:
+    description: View achievements
+    default: true
+  brewmasters.discover:
+    description: Force discover recipes for players
+    default: op
+  brewmasters.speed:
+    description: Manage brewing stand speeds
+    default: op
+  brewmasters.speed.fast:
+    description: Brew 2x faster
+    default: false
+  brewmasters.speed.veryfast:
+    description: Brew 4x faster
+    default: false
+  brewmasters.speed.slow:
+    description: Brew 2x slower (penalty)
+    default: false
+  brewmasters.chains:
+    description: Allows viewing brewing chains
+    default: true
+  brewmasters.chain:
+    description: Allows viewing specific chain details
+    default: true
+

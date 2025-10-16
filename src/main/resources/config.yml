@@ -1,0 +1,749 @@
+# BrewMasters Configuration
+# Custom brewing recipes for your server
+
+# Discovery System Configuration
+discovery:
+  enabled: true  # Enable recipe discovery system
+  show-notifications: true  # Show discovery notifications to players
+
+  # Discovery methods for specific recipes
+  methods:
+    # Example: Soul Wither recipe requires visiting the Nether
+    soul_wither:
+      type: BIOME_VISIT
+      biomes:
+        - NETHER_WASTES
+        - SOUL_SAND_VALLEY
+
+    # Example: Veteran potion requires level 50
+    veteran_potion:
+      type: LEVEL_REACH
+      level: 50
+
+    # Example: Storm brew requires permission
+    storm_brew:
+      type: PERMISSION
+      permission: "brewmasters.storm"
+
+# Achievement System Configuration
+achievements:
+  enabled: true  # Enable achievement system
+  show-notifications: true  # Show achievement notifications to players
+
+  # Achievement definitions
+  list:
+    # First discovery achievement
+    first_discovery:
+      name: "&6First Discovery"
+      description: "Discover your first recipe"
+      type: DISCOVERY
+      trigger: FIRST_DISCOVERY
+      icon: BREWING_STAND
+      reward:
+        type: EXPERIENCE
+        experience: 100
+        message: "&aYou gained 100 experience for your first discovery!"
+
+    # First brew achievement
+    first_brew:
+      name: "&bFirst Brew"
+      description: "Brew your first custom potion"
+      type: BREWING
+      trigger: FIRST_BREW
+      icon: POTION
+      reward:
+        type: ITEMS
+        items:
+          - material: EXPERIENCE_BOTTLE
+            amount: 3
+            name: "&eBonus Experience"
+            lore:
+              - "&7Reward for first brew"
+        message: "&aYou received bonus experience bottles!"
+
+    # Recipe collector achievements
+    recipe_collector_5:
+      name: "&eRecipe Collector"
+      description: "Discover 5 recipes"
+      type: DISCOVERY
+      trigger: RECIPES_DISCOVERED
+      target-value: 5
+      icon: BOOK
+      reward:
+        type: EXPERIENCE
+        experience: 250
+
+    recipe_collector_10:
+      name: "&6Recipe Expert"
+      description: "Discover 10 recipes"
+      type: DISCOVERY
+      trigger: RECIPES_DISCOVERED
+      target-value: 10
+      icon: ENCHANTED_BOOK
+      reward:
+        type: EXPERIENCE
+        experience: 500
+
+    # Master brewer achievement
+    master_brewer:
+      name: "&5Master Brewer"
+      description: "Discover all available recipes"
+      type: DISCOVERY
+      trigger: MASTER_BREWER
+      icon: BREWING_STAND
+      reward:
+        type: COMBINED
+        items:
+          - material: DIAMOND
+            amount: 5
+            name: "&bMaster's Reward"
+        experience: 1000
+        commands:
+          - "broadcast &6{player} &ehas become a Master Brewer!"
+        message: "&6Congratulations! You are now a Master Brewer!"
+
+    # Brewing milestones
+    brewing_apprentice:
+      name: "&aBrewing Apprentice"
+      description: "Brew 25 potions"
+      type: BREWING
+      trigger: POTIONS_BREWED
+      target-value: 25
+      icon: GLASS_BOTTLE
+      reward:
+        type: EXPERIENCE
+        experience: 300
+
+    brewing_journeyman:
+      name: "&9Brewing Journeyman"
+      description: "Brew 100 potions"
+      type: BREWING
+      trigger: POTIONS_BREWED
+      target-value: 100
+      icon: BREWING_STAND
+      reward:
+        type: EXPERIENCE
+        experience: 750
+
+    # Chain-related achievements
+    first_chain:
+      name: "&eFirst Chain"
+      description: "Complete your first brewing chain"
+      type: SPECIAL
+      trigger: FIRST_CHAIN
+      icon: CHAIN
+      reward:
+        type: EXPERIENCE
+        experience: 200
+
+    chain_master:
+      name: "&6Chain Master"
+      description: "Complete 5 brewing chains"
+      type: SPECIAL
+      trigger: CHAINS_COMPLETED
+      target-value: 5
+      icon: NETHER_STAR
+      reward:
+        type: COMBINED
+        experience: 500
+        commands:
+          - "give {player} minecraft:experience_bottle 10"
+        message: "&6You are a true Chain Master!"
+
+# Brewing Speed System Configuration
+brewing-speeds:
+  enabled: true  # Enable custom brewing speeds
+  global-multiplier: 1.0  # Global speed multiplier (1.0 = normal, 0.5 = 2x faster, 2.0 = 2x slower)
+
+  # Permission-based speed multipliers (requires permission to apply)
+  permission-multipliers:
+    "brewmasters.speed.fast": 0.5      # 2x faster brewing
+    "brewmasters.speed.veryfast": 0.25  # 4x faster brewing
+    "brewmasters.speed.slow": 2.0       # 2x slower brewing
+
+  # Biome-based speed multipliers
+  biome-multipliers:
+    NETHER_WASTES: 0.75    # 25% faster in nether
+    SOUL_SAND_VALLEY: 0.5  # 50% faster in soul sand valley
+    DESERT: 1.25           # 25% slower in desert
+    SNOWY_TUNDRA: 1.5      # 50% slower in cold biomes
+
+  # Recipe-specific speed multipliers
+  recipe-multipliers:
+    soul_wither: 2.0       # Soul wither takes 2x longer
+    veteran_potion: 0.8    # Veteran potion is 20% faster
+    storm_brew: 1.5        # Storm brew takes 50% longer
+
+# Recipe Format:
+# recipes:
+#   recipe-id:
+#     base-potion: MATERIAL_NAME (e.g., POTION, WATER_BOTTLE, AWKWARD_POTION)
+#     ingredient: INGREDIENT_FORMAT (see below for formats)
+#     brew-time: 400 (in ticks, 20 ticks = 1 second, default: 400)
+#     result:
+#       name: "Display Name"
+#       lore:
+#         - "Line 1"
+#         - "Line 2"
+#       color: "#RRGGBB" or "r,g,b"
+#       effects:
+#         - type: EFFECT_TYPE
+#           duration: 600 (in ticks)
+#           amplifier: 0 (0 = level 1, 1 = level 2, etc.)
+#
+# Ingredient Formats:
+#   Vanilla: "MATERIAL_NAME" or "MATERIAL_NAME:amount"
+#   MythicMobs: "mythic:ITEM_ID" or "mythic:ITEM_ID:amount"
+#   Crucible: "crucible:ITEM_ID" or "crucible:ITEM_ID:amount"
+#
+# Examples:
+#   ingredient: NETHER_WART           # Vanilla material
+#   ingredient: DIAMOND:2             # 2 diamonds required
+#   ingredient: mythic:MAGIC_DUST     # MythicMobs item
+#   ingredient: crucible:ANCIENT_RUNE # Crucible item
+
+recipes:
+  # Example: Fire Resistance Potion
+  fire_resistance:
+    base-potion: AWKWARD_POTION
+    ingredient: MAGMA_CREAM
+    brew-time: 400
+    result:
+      name: "&6Potion of Fire Resistance"
+      lore:
+        - "&7Grants immunity to fire"
+        - "&7and lava for 3 minutes"
+      color: "#FF8C00"
+      effects:
+        - type: FIRE_RESISTANCE
+          duration: 3600
+          amplifier: 0
+
+  # Example: Custom Speed Potion
+  super_speed:
+    base-potion: AWKWARD_POTION
+    ingredient: SUGAR
+    brew-time: 400
+    result:
+      name: "&bPotion of Swiftness"
+      lore:
+        - "&7Increases movement speed"
+      color: "#7CAFC2"
+      effects:
+        - type: SPEED
+          duration: 1800
+          amplifier: 0
+
+  # Example: Healing Potion
+  instant_health:
+    base-potion: AWKWARD_POTION
+    ingredient: GLISTERING_MELON_SLICE
+    brew-time: 400
+    result:
+      name: "&cPotion of Healing"
+      lore:
+        - "&7Restores health instantly"
+      color: "#F82423"
+      effects:
+        - type: HEAL
+          duration: 1
+          amplifier: 0
+
+  # Example: Night Vision
+  night_vision:
+    base-potion: AWKWARD_POTION
+    ingredient: GOLDEN_CARROT
+    brew-time: 400
+    result:
+      name: "&9Potion of Night Vision"
+      lore:
+        - "&7See clearly in the dark"
+      color: "#1F1FA1"
+      effects:
+        - type: NIGHT_VISION
+          duration: 3600
+          amplifier: 0
+
+  # Example: Custom Multi-Effect Potion
+  alchemist_brew:
+    base-potion: AWKWARD_POTION
+    ingredient: DRAGON_BREATH
+    brew-time: 600
+    result:
+      name: "&5&lAlchemist's Elixir"
+      lore:
+        - "&7A powerful concoction"
+        - "&7granting multiple effects"
+        - "&8Legendary"
+      color: "#9B30FF"
+      effects:
+        - type: REGENERATION
+          duration: 1200
+          amplifier: 1
+        - type: ABSORPTION
+          duration: 2400
+          amplifier: 0
+        - type: RESISTANCE
+          duration: 1200
+          amplifier: 0
+
+  # Example: Invisibility
+  invisibility:
+    base-potion: POTION
+    ingredient: FERMENTED_SPIDER_EYE
+    brew-time: 400
+    result:
+      name: "&7Potion of Invisibility"
+      lore:
+        - "&7Become invisible to others"
+      color: "#7F8392"
+      effects:
+        - type: INVISIBILITY
+          duration: 1800
+          amplifier: 0
+
+  # Example: Soul Sand - Wither Potion
+  soul_wither:
+    base-potion: AWKWARD_POTION
+    ingredient: SOUL_SAND
+    brew-time: 500
+    result:
+      name: "&8&lPotion of Withering"
+      lore:
+        - "&7Harness the power of souls"
+        - "&7to inflict withering damage"
+        - "&8Rare"
+      color: "#2C1810"
+      glowing: true
+      effects:
+        - type: WITHER
+          duration: 600
+          amplifier: 1
+        - type: WEAKNESS
+          duration: 1200
+          amplifier: 0
+
+  # Example: Soul Sand - Soul Speed Potion
+  soul_speed:
+    base-potion: AWKWARD_POTION
+    ingredient: SOUL_SOIL
+    brew-time: 450
+    result:
+      name: "&3&lPotion of Soul Swiftness"
+      lore:
+        - "&7Move faster on soul sand"
+        - "&7and soul soil"
+        - "&bUncommon"
+      color: "#5C4033"
+      effects:
+        - type: SPEED
+          duration: 2400
+          amplifier: 2
+        - type: JUMP_BOOST
+          duration: 2400
+          amplifier: 1
+
+  # Example: Splash Potion
+  splash_healing:
+    base-potion: SPLASH_POTION
+    ingredient: GLISTERING_MELON_SLICE
+    brew-time: 400
+    result:
+      name: "&c&lSplash Potion of Healing"
+      lore:
+        - "&7Throw to heal nearby allies"
+      color: "#FF2020"
+      potion-type: SPLASH
+      effects:
+        - type: HEAL
+          duration: 1
+          amplifier: 1
+
+  # Example: Lingering Potion
+  lingering_strength:
+    base-potion: LINGERING_POTION
+    ingredient: BLAZE_POWDER
+    brew-time: 600
+    result:
+      name: "&6&lLingering Potion of Strength"
+      lore:
+        - "&7Creates a cloud that grants"
+        - "&7strength to those who enter"
+      color: "#932423"
+      potion-type: LINGERING
+      glowing: true
+      effects:
+        - type: STRENGTH
+          duration: 1800
+          amplifier: 1
+
+  # Example: Ender Pearl - Teleportation Potion
+  ender_shift:
+    base-potion: AWKWARD_POTION
+    ingredient: ENDER_PEARL
+    brew-time: 800
+    result:
+      name: "&5&lPotion of Ender Shift"
+      lore:
+        - "&7Grants temporary teleportation"
+        - "&7and dimensional powers"
+        - "&5&lEpic"
+      color: "#48D1CC"
+      glowing: true
+      effects:
+        - type: SLOW_FALLING
+          duration: 3600
+          amplifier: 0
+        - type: NIGHT_VISION
+          duration: 3600
+          amplifier: 0
+        - type: SPEED
+          duration: 1800
+          amplifier: 1
+
+  # Example: Netherite Scrap - Ultimate Defense
+  netherite_defense:
+    base-potion: AWKWARD_POTION
+    ingredient: NETHERITE_SCRAP
+    brew-time: 1200
+    result:
+      name: "&4&lNetherite Fortification"
+      lore:
+        - "&7The ultimate defensive potion"
+        - "&7forged from ancient debris"
+        - "&6&lLegendary"
+      color: "#654321"
+      glowing: true
+      custom-model-data: 1
+      effects:
+        - type: RESISTANCE
+          duration: 2400
+          amplifier: 2
+        - type: FIRE_RESISTANCE
+          duration: 3600
+          amplifier: 0
+        - type: ABSORPTION
+          duration: 2400
+          amplifier: 3
+        - type: REGENERATION
+          duration: 1200
+          amplifier: 1
+
+  # Example: Echo Shard - Ancient Power
+  echo_resonance:
+    base-potion: AWKWARD_POTION
+    ingredient: ECHO_SHARD
+    brew-time: 1000
+    result:
+      name: "&b&lPotion of Echo Resonance"
+      lore:
+        - "&7Channel the power of the deep dark"
+        - "&7Grants enhanced senses and strength"
+        - "&3&lMythic"
+      color: "#008B8B"
+      glowing: true
+      effects:
+        - type: NIGHT_VISION
+          duration: 6000
+          amplifier: 0
+        - type: STRENGTH
+          duration: 2400
+          amplifier: 1
+        - type: RESISTANCE
+          duration: 2400
+          amplifier: 0
+        - type: GLOWING
+          duration: 1200
+          amplifier: 0
+
+  # Example: Amethyst Shard - Clarity Potion
+  amethyst_clarity:
+    base-potion: AWKWARD_POTION
+    ingredient: AMETHYST_SHARD
+    brew-time: 600
+    result:
+      name: "&d&lPotion of Crystal Clarity"
+      lore:
+        - "&7Crystalline focus and precision"
+        - "&fRare"
+      color: "#9966CC"
+      effects:
+        - type: NIGHT_VISION
+          duration: 4800
+          amplifier: 0
+        - type: HASTE
+          duration: 2400
+          amplifier: 1
+        - type: LUCK
+          duration: 6000
+          amplifier: 0
+
+  # ===== CONDITIONAL RECIPES =====
+
+  # Example: Nether-only recipe (must be in Nether)
+  nether_essence:
+    base-potion: AWKWARD_POTION
+    ingredient: NETHERRACK
+    brew-time: 600
+    result:
+      name: "&4&lNether Essence"
+      lore:
+        - "&7Can only be brewed in the Nether"
+        - "&cRare"
+      color: "#8B0000"
+      glowing: true
+      effects:
+        - type: FIRE_RESISTANCE
+          duration: 6000
+          amplifier: 0
+        - type: STRENGTH
+          duration: 2400
+          amplifier: 1
+    conditions:
+      worlds:
+        - world_nether
+      worlds-whitelist: true
+
+  # Example: Deep dark recipe (requires specific Y-level)
+  deep_dark_brew:
+    base-potion: AWKWARD_POTION
+    ingredient: SCULK_CATALYST
+    brew-time: 800
+    result:
+      name: "&0&lDeep Dark Brew"
+      lore:
+        - "&7Must be brewed deep underground"
+        - "&7Y-level: -64 to 0"
+        - "&3Mythic"
+      color: "#0A0A0A"
+      glowing: true
+      effects:
+        - type: NIGHT_VISION
+          duration: 9600
+          amplifier: 0
+        - type: INVISIBILITY
+          duration: 2400
+          amplifier: 0
+    conditions:
+      y-level:
+        min: -64
+        max: 0
+
+  # Example: Night-time only recipe
+  moonlight_elixir:
+    base-potion: AWKWARD_POTION
+    ingredient: GLOWSTONE_DUST
+    brew-time: 500
+    result:
+      name: "&e&lMoonlight Elixir"
+      lore:
+        - "&7Can only be brewed at night"
+        - "&7Time: 13000-23000"
+      color: "#F0E68C"
+      effects:
+        - type: NIGHT_VISION
+          duration: 9600
+          amplifier: 0
+        - type: SPEED
+          duration: 3600
+          amplifier: 1
+    conditions:
+      time:
+        min: 13000
+        max: 23000
+
+  # Example: Thunderstorm recipe
+  storm_brew:
+    base-potion: AWKWARD_POTION
+    ingredient: LIGHTNING_ROD
+    brew-time: 700
+    result:
+      name: "&b&lStorm Brew"
+      lore:
+        - "&7Can only be brewed during a thunderstorm"
+        - "&5Epic"
+      color: "#4682B4"
+      glowing: true
+      effects:
+        - type: SPEED
+          duration: 3600
+          amplifier: 2
+        - type: STRENGTH
+          duration: 2400
+          amplifier: 1
+    conditions:
+      weather: THUNDER
+
+  # Example: Biome-specific recipe (Desert only)
+  desert_mirage:
+    base-potion: AWKWARD_POTION
+    ingredient: SAND
+    brew-time: 500
+    result:
+      name: "&6&lDesert Mirage"
+      lore:
+        - "&7Can only be brewed in desert biomes"
+      color: "#EDC9AF"
+      effects:
+        - type: SPEED
+          duration: 3600
+          amplifier: 1
+        - type: FIRE_RESISTANCE
+          duration: 3600
+          amplifier: 0
+    conditions:
+      biomes:
+        - DESERT
+        - DESERT_HILLS
+      biomes-whitelist: true
+
+  # Example: Permission-based recipe
+  master_alchemist_brew:
+    base-potion: AWKWARD_POTION
+    ingredient: NETHER_STAR
+    brew-time: 1200
+    result:
+      name: "&5&lMaster Alchemist's Brew"
+      lore:
+        - "&7Requires master alchemist permission"
+        - "&6&lLegendary"
+      color: "#9400D3"
+      glowing: true
+      effects:
+        - type: REGENERATION
+          duration: 2400
+          amplifier: 2
+        - type: RESISTANCE
+          duration: 2400
+          amplifier: 2
+        - type: STRENGTH
+          duration: 2400
+          amplifier: 2
+        - type: ABSORPTION
+          duration: 2400
+          amplifier: 3
+    conditions:
+      permission: brewmasters.recipe.master
+      permission-required: true
+
+  # Example: PlaceholderAPI condition (requires player level >= 50)
+  # Requires PlaceholderAPI plugin installed
+  veteran_potion:
+    base-potion: AWKWARD_POTION
+    ingredient: EXPERIENCE_BOTTLE
+    brew-time: 800
+    result:
+      name: "&a&lVeteran's Potion"
+      lore:
+        - "&7Requires level 50+"
+        - "&fRare"
+      color: "#7FFF00"
+      effects:
+        - type: LUCK
+          duration: 6000
+          amplifier: 2
+        - type: HASTE
+          duration: 3600
+          amplifier: 1
+    conditions:
+      placeholders:
+        - placeholder: "%player_level%"
+          operator: ">="
+          value: "50"
+
+# Brewing chains configuration
+brewing-chains:
+  enabled: true
+
+  chains:
+    # Example: Alchemist's Journey chain
+    alchemist_journey:
+      name: "&6Alchemist's Journey"
+      description: "Master the art of basic alchemy"
+      requires-order: true  # Must complete steps in order
+      steps:
+        - recipe: "healing"
+          description: "Learn the basics of healing"
+        - recipe: "fire_resistance"
+          description: "Master fire protection"
+        - recipe: "night_vision"
+          description: "See through the darkness"
+      completion-reward:
+        experience: 100
+        message: "&aYou have mastered basic alchemy!"
+        commands:
+          - "give {player} minecraft:brewing_stand 1"
+
+    # Example: Master Brewer chain
+    master_brewer:
+      name: "&5Master Brewer"
+      description: "Become a legendary potion master"
+      requires-order: false  # Can complete in any order
+      steps:
+        - recipe: "strength"
+          description: "Brew potions of power"
+        - recipe: "speed"
+          description: "Create swift elixirs"
+        - recipe: "invisibility"
+          description: "Master the art of concealment"
+        - recipe: "poison"
+          description: "Learn dangerous concoctions"
+      completion-reward:
+        experience: 250
+        message: "&5You are now a Master Brewer!"
+        commands:
+          - "give {player} minecraft:nether_star 1"
+          - "broadcast &6{player} has become a Master Brewer!"
+
+  # Example MythicMobs Integration Recipe
+  mythic_strength:
+    base-potion: AWKWARD_POTION
+    ingredient: mythic:DRAGON_SCALE  # Requires MythicMobs item
+    brew-time: 600
+    result:
+      name: "&4Dragon's Might"
+      lore:
+        - "&7Infused with dragon essence"
+        - "&7Grants incredible strength"
+      color: "#8B0000"
+      effects:
+        - type: INCREASE_DAMAGE
+          duration: 3600
+          amplifier: 2
+
+  # Example Crucible Integration Recipe
+  crucible_wisdom:
+    base-potion: WATER_BOTTLE
+    ingredient: crucible:WISDOM_CRYSTAL  # Requires Crucible item
+    brew-time: 800
+    result:
+      name: "&bCrystal Wisdom"
+      lore:
+        - "&7Crystallized knowledge"
+        - "&7Enhances experience gain"
+      color: "#00BFFF"
+      effects:
+        - type: LUCK
+          duration: 6000
+          amplifier: 1
+
+  # Example with quantity requirement
+  expensive_healing:
+    base-potion: AWKWARD_POTION
+    ingredient: DIAMOND:3  # Requires 3 diamonds
+    brew-time: 1200
+    result:
+      name: "&dDiamond Elixir"
+      lore:
+        - "&7Made with precious gems"
+        - "&7Ultimate healing power"
+      color: "#FF69B4"
+      potion-type: SPLASH
+      effects:
+        - type: HEAL
+          duration: 1
+          amplifier: 5
+        - type: REGENERATION
+          duration: 1200
+          amplifier: 2
+
