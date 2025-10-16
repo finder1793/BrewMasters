@@ -231,7 +231,7 @@ explorer_brew:
 
 Potential features for future versions:
 - [x] Recipe discovery system
-- [ ] Brewing achievements
+- [x] Brewing achievements
 - [x] Recipe books/GUI
 - [ ] Brewing skill levels
 - [ ] Particle effects on brewing
@@ -240,7 +240,7 @@ Potential features for future versions:
 - [ ] Recipe categories/tags
 - [ ] Import/export recipes
 - [ ] Recipe sharing system
-- [ ] Brewing statistics
+- [x] Brewing statistics
 - [x] Custom brewing stand speeds
 - [x] Multi-step brewing chains
 - [x] Conditional recipes (permissions, time, location)
@@ -248,20 +248,61 @@ Potential features for future versions:
 
 ## Plugin Statistics
 
-- **Lines of Code**: ~3000+
-- **Classes**: 36
-- **Configuration Options**: 10+
-- **Supported Effects**: 30+
-- **Example Recipes**: 20+
-- **Documentation Pages**: 5
+- **Lines of Code**: ~11,000+
+- **Java Classes**: 43
+  - 7 Managers (Recipe, Player Data, Discovery, Achievement, Brewing Speed, Chains, Potion Effects)
+  - 8 Condition Types (Biome, World, Permission, Time, Weather, Y-Level, Placeholder)
+  - 3 GUI Screens (Recipe Book, Recipe Details, Achievements)
+  - 4 Ingredient Types (Vanilla, MythicMobs, Crucible)
+  - 9 Model Classes (Recipe, Achievement, Player Data, Chain, Active Potion Effect, etc.)
+  - 4 Listeners (Brewing, GUI, Player, Potion Drink)
+  - 4 Utility Classes
+  - 1 PlaceholderAPI Expansion
+- **Configuration Options**: 100+
+  - Recipe definitions
+  - Achievement system
+  - Discovery methods
+  - GUI customization
+  - Brewing chains
+  - Speed modifiers
+  - Condition settings
+- **Supported Potion Effects**: 32
+  - All vanilla Minecraft potion effects
+  - Custom durations and amplifiers
+- **Example Recipes**: 23
+  - Basic elemental potions
+  - Advanced special effects
+  - Conditional recipes (biome, time, permission, etc.)
+  - Splash and lingering variants
+- **Documentation Pages**: 9
+  - README.md (Main documentation)
+  - FEATURES.md (Feature list)
+  - RECIPE_GUIDE.md (Recipe creation guide)
+  - CONDITIONS_GUIDE.md (Conditions documentation)
+  - GUI_CONFIG_GUIDE.md (GUI customization)
+  - PLACEHOLDERS.md (PlaceholderAPI integration)
+  - COMMANDS_GUIDE.md (Potion commands system)
+  - QUICKSTART.md (Quick setup guide)
+  - CHANGELOG.md (Version history)
+- **PlaceholderAPI Placeholders**: 35+
+  - General statistics
+  - Rank system (10 tiers)
+  - Per-recipe tracking
+  - Achievement checks
+  - Chain progress
+  - Custom statistics
+  - Active potion effect timers (3 types)
+- **Brewing Ranks**: 10 tiers
+  - Newcomer → Beginner → Novice → Apprentice → Skilled
+  - Proficient → Adept → Expert → Master → Grandmaster
 
 ## Support & Community
 
 - **Author**: finder17
 - **Group**: net.pwing
 - **License**: MIT
-- **Version**: 1.0.0
-- **API Version**: 1.20
+- **Version**: 1.3.0
+- **API Version**: 1.21
 
 ## Why BrewMasters?
 

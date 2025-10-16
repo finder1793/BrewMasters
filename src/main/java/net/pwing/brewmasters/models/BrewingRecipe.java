@@ -3,7 +3,6 @@ package net.pwing.brewmasters.models;
 import net.pwing.brewmasters.conditions.BrewCondition;
 import net.pwing.brewmasters.ingredients.BrewingIngredient;
 import net.pwing.brewmasters.ingredients.VanillaIngredient;
-import net.pwing.brewmasters.utils.ColorUtils;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -30,6 +29,8 @@ public class BrewingRecipe {
     private final boolean glowing;
     private final int customModelData;
     private final List<BrewCondition> conditions;
+    private final List<String> drinkCommands;
+    private final List<String> expireCommands;
 
     private BrewingRecipe(Builder builder) {
         this.id = builder.id;
@@ -44,6 +45,8 @@ public class BrewingRecipe {
         this.glowing = builder.glowing;
         this.customModelData = builder.customModelData;
         this.conditions = builder.conditions;
+        this.drinkCommands = builder.drinkCommands != null ? new ArrayList<>(builder.drinkCommands) : new ArrayList<>();
+        this.expireCommands = builder.expireCommands != null ? new ArrayList<>(builder.expireCommands) : new ArrayList<>();
     }
 
     public String getId() {
@@ -104,6 +107,14 @@ public class BrewingRecipe {
     public List<BrewCondition> getConditions() {
         return conditions;
     }
+    
+    public List<String> getDrinkCommands() {
+        return new ArrayList<>(drinkCommands);
+    }
+    
+    public List<String> getExpireCommands() {
+        return new ArrayList<>(expireCommands);
+    }
 
     /**
      * Check if all conditions are met for this recipe
@@ -147,11 +158,15 @@ public class BrewingRecipe {
 
         if (meta != null) {
             if (resultName != null && !resultName.isEmpty()) {
-                meta.setDisplayName(ColorUtils.translate(resultName));
+                meta.displayName(net.pwing.brewmasters.utils.TextUtils.parseAuto(resultName));
             }
 
             if (resultLore != null && !resultLore.isEmpty()) {
-                meta.setLore(ColorUtils.translate(resultLore));
+                List<net.kyori.adventure.text.Component> loreComponents = new ArrayList<>();
+                for (String line : resultLore) {
+                    loreComponents.add(net.pwing.brewmasters.utils.TextUtils.parseAuto(line));
+                }
+                meta.lore(loreComponents);
             }
 
             if (color != null) {
@@ -171,12 +186,11 @@ public class BrewingRecipe {
 
         // Add glowing effect if enabled
         if (glowing) {
-            potion.addUnsafeEnchantment(org.bukkit.enchantments.Enchantment.LUCK, 1);
-            ItemStack finalPotion = potion;
-            org.bukkit.inventory.meta.ItemMeta itemMeta = finalPotion.getItemMeta();
+            org.bukkit.inventory.meta.ItemMeta itemMeta = potion.getItemMeta();
             if (itemMeta != null) {
-                itemMeta.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_ENCHANTS);
-                finalPotion.setItemMeta(itemMeta);
+                // Use Paper 1.20.5+ method (available in 1.21.1)
+                itemMeta.setEnchantmentGlintOverride(true);
+                potion.setItemMeta(itemMeta);
             }
         }
 
@@ -229,6 +243,8 @@ public class BrewingRecipe {
         private boolean glowing = false;
         private int customModelData = 0;
         private List<BrewCondition> conditions = new ArrayList<>();
+        private List<String> drinkCommands = new ArrayList<>();
+        private List<String> expireCommands = new ArrayList<>();
 
         public Builder(String id) {
             this.id = id;
@@ -311,6 +327,16 @@ public class BrewingRecipe {
 
         public Builder conditions(List<BrewCondition> conditions) {
             this.conditions = conditions;
+            return this;
+        }
+        
+        public Builder drinkCommands(List<String> drinkCommands) {
+            this.drinkCommands = drinkCommands;
+            return this;
+        }
+        
+        public Builder expireCommands(List<String> expireCommands) {
+            this.expireCommands = expireCommands;
             return this;
         }
 

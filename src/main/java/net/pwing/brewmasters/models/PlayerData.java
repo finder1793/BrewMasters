@@ -140,6 +140,13 @@ public class PlayerData {
     public int getStat(String statName) {
         return brewingStats.getOrDefault(statName, 0);
     }
+    
+    /**
+     * Set a brewing statistic value
+     */
+    public void setStat(String statName, int value) {
+        brewingStats.put(statName, value);
+    }
 
     /**
      * Get all brewing statistics
@@ -224,5 +231,75 @@ public class PlayerData {
 
     public long getLastSeen() {
         return lastSeen;
+    }
+    
+    // ===== Convenience Methods for Common Statistics =====
+    
+    /**
+     * Get total potions brewed
+     */
+    public int getTotalPotionsBrewed() {
+        return getStat("total_brewed");
+    }
+    
+    /**
+     * Get total recipes discovered
+     */
+    public int getTotalRecipesDiscovered() {
+        return discoveredRecipes.size();
+    }
+    
+    /**
+     * Get total achievements unlocked
+     */
+    public int getTotalAchievements() {
+        return achievements.size();
+    }
+    
+    /**
+     * Get total chains completed
+     */
+    public int getTotalChainsCompleted() {
+        return completedChains.size();
+    }
+    
+    /**
+     * Get times a specific recipe has been brewed
+     */
+    public int getRecipeBrewCount(String recipeId) {
+        return getStat("recipe_" + recipeId + "_brewed");
+    }
+    
+    /**
+     * Get brewing rank based on total potions brewed
+     */
+    public String getBrewingRank() {
+        int total = getTotalPotionsBrewed();
+        if (total >= 10000) return "Grandmaster";
+        if (total >= 5000) return "Master";
+        if (total >= 2500) return "Expert";
+        if (total >= 1000) return "Adept";
+        if (total >= 500) return "Proficient";
+        if (total >= 250) return "Skilled";
+        if (total >= 100) return "Apprentice";
+        if (total >= 50) return "Novice";
+        if (total >= 10) return "Beginner";
+        return "Newcomer";
+    }
+    
+    /**
+     * Get discovery percentage (0-100)
+     */
+    public double getDiscoveryPercentage(int totalRecipes) {
+        if (totalRecipes == 0) return 0.0;
+        return (double) discoveredRecipes.size() / totalRecipes * 100.0;
+    }
+    
+    /**
+     * Get achievement completion percentage (0-100)
+     */
+    public double getAchievementPercentage(int totalAchievements) {
+        if (totalAchievements == 0) return 0.0;
+        return (double) achievements.size() / totalAchievements * 100.0;
     }
 }

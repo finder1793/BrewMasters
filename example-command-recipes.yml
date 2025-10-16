@@ -1,0 +1,322 @@
+# BrewMasters - Command-Based Recipe Examples
+# These recipes demonstrate the drink-commands and expire-commands features
+# Copy these to your config.yml recipes section
+
+recipes:
+  # ===== TEMPORARY PERMISSION GROUPS =====
+  
+  vip_boost_potion:
+    base-potion: AWKWARD_POTION
+    ingredient: EMERALD
+    brew-time: 800
+    result:
+      name: "<gradient:gold:yellow>&lVIP Boost Potion</gradient>"
+      lore:
+        - "<gray>Grants temporary VIP access"
+        - "<gold>Duration: 5 minutes"
+        - "<green>✓ VIP Perks"
+        - "<green>✓ Special Commands"
+      color: "#FFD700"
+      glowing: true
+      effects:
+        - type: LUCK
+          duration: 6000  # 5 minutes (6000 ticks)
+          amplifier: 1
+        - type: HERO_OF_THE_VILLAGE
+          duration: 6000
+          amplifier: 0
+    
+    # Commands when player drinks the potion
+    drink-commands:
+      - "[console] lp user {player} parent addtemp vip 5m"
+      - "[console] tellraw {player} {\"text\":\"✨ You now have VIP access for 5 minutes!\",\"color\":\"gold\",\"bold\":true}"
+      - "[console] playsound minecraft:ui.toast.challenge_complete player {player} ~ ~ ~ 1 1.2"
+      - "[console] particle minecraft:totem_of_undying {player} ~ ~1 ~ 0.5 0.5 0.5 0.1 50"
+    
+    # Commands when the potion effects expire
+    expire-commands:
+      - "[console] lp user {player} parent remove vip"
+      - "[console] tellraw {player} {\"text\":\"⚠ Your VIP access has expired!\",\"color\":\"red\"}"
+      - "[console] playsound minecraft:entity.villager.no player {player} ~ ~ ~ 1 1"
+  
+  # ===== WARRIOR TRANSFORMATION =====
+  
+  elite_warrior_potion:
+    base-potion: AWKWARD_POTION
+    ingredient: NETHERITE_SCRAP
+    brew-time: 1000
+    result:
+      name: "<gradient:red:dark_red>&l⚔ Elite Warrior Potion</gradient>"
+      lore:
+        - "<gray>Transform into an elite warrior"
+        - "<red>Duration: 2 minutes"
+        - "<dark_red>+ Strength III"
+        - "<yellow>+ Speed II"
+        - "<blue>+ Resistance II"
+      color: "#8B0000"
+      glowing: true
+      effects:
+        - type: STRENGTH
+          duration: 2400  # 2 minutes
+          amplifier: 2
+        - type: SPEED
+          duration: 2400
+          amplifier: 1
+        - type: RESISTANCE
+          duration: 2400
+          amplifier: 1
+    
+    drink-commands:
+      - "[console] lp user {player} parent addtemp warrior 2m"
+      - "[console] title {player} title {\"text\":\"⚔ WARRIOR MODE ⚔\",\"color\":\"dark_red\",\"bold\":true}"
+      - "[console] title {player} subtitle {\"text\":\"Unleash your power!\",\"color\":\"red\"}"
+      - "[console] playsound minecraft:entity.ender_dragon.growl player @a ~ ~ ~ 2 1.5"
+      - "[console] particle minecraft:flame {player} ~ ~1 ~ 0.5 0.5 0.5 0.1 100"
+      - "[player] me has become an elite warrior!"
+    
+    expire-commands:
+      - "[console] lp user {player} parent remove warrior"
+      - "[console] tellraw {player} {\"text\":\"Your warrior powers have faded...\",\"color\":\"gray\",\"italic\":true}"
+      - "[console] playsound minecraft:block.beacon.deactivate player {player} ~ ~ ~ 1 0.8"
+  
+  # ===== ECONOMY INTEGRATION =====
+  
+  lucky_fortune_potion:
+    base-potion: AWKWARD_POTION
+    ingredient: GOLD_BLOCK
+    brew-time: 600
+    result:
+      name: "<gradient:yellow:gold>&l💰 Lucky Fortune Potion</gradient>"
+      lore:
+        - "<gray>Instant $5000 bonus!"
+        - "<red>⚠ You'll repay double when it expires"
+        - "<yellow>Duration: 3 minutes"
+      color: "#FFD700"
+      effects:
+        - type: LUCK
+          duration: 3600  # 3 minutes
+          amplifier: 3
+    
+    drink-commands:
+      - "[console] eco give {player} 5000"
+      - "[console] tellraw {player} {\"text\":\"💰 You gained $5,000!\",\"color\":\"green\",\"bold\":true}"
+      - "[console] tellraw {player} {\"text\":\"Remember: You'll pay back $10,000 when it expires!\",\"color\":\"yellow\"}"
+      - "[console] playsound minecraft:entity.player.levelup player {player} ~ ~ ~ 1 2"
+    
+    expire-commands:
+      - "[console] eco take {player} 10000"
+      - "[console] tellraw {player} {\"text\":\"💸 The debt collector took $10,000!\",\"color\":\"red\",\"bold\":true}"
+      - "[console] playsound minecraft:entity.villager.trade player {player} ~ ~ ~ 1 0.5"
+  
+  # ===== TELEPORTATION & ARENA =====
+  
+  arena_challenger_potion:
+    base-potion: SPLASH_POTION
+    ingredient: BLAZE_ROD
+    brew-time: 1200
+    result:
+      name: "<gradient:red:orange>&l🗡 Arena Challenger Potion</gradient>"
+      lore:
+        - "<gray>Enter the PvP arena"
+        - "<red>Instant teleportation"
+        - "<yellow>Duration: 5 minutes"
+      potion-type: SPLASH
+      color: "#FF4500"
+      glowing: true
+      effects:
+        - type: STRENGTH
+          duration: 6000  # 5 minutes
+          amplifier: 1
+        - type: SPEED
+          duration: 6000
+          amplifier: 1
+    
+    drink-commands:
+      - "[console] tp {player} -100 64 -100"
+      - "[console] gamemode adventure {player}"
+      - "[console] clear {player}"
+      - "[console] give {player} iron_sword 1"
+      - "[console] give {player} iron_helmet 1"
+      - "[console] give {player} iron_chestplate 1"
+      - "[console] give {player} iron_leggings 1"
+      - "[console] give {player} iron_boots 1"
+      - "[console] give {player} cooked_beef 16"
+      - "[console] scoreboard players set {player} InArena 1"
+      - "[console] title {player} title {\"text\":\"ARENA\",\"color\":\"red\",\"bold\":true}"
+      - "[console] title {player} subtitle {\"text\":\"Fight for glory!\",\"color\":\"gold\"}"
+    
+    expire-commands:
+      - "[console] tp {player} spawn"
+      - "[console] gamemode survival {player}"
+      - "[console] scoreboard players set {player} InArena 0"
+      - "[console] tellraw {player} {\"text\":\"Arena time expired! You've been returned to spawn.\",\"color\":\"yellow\"}"
+  
+  # ===== QUEST PROGRESSION =====
+  
+  enlightenment_potion:
+    base-potion: AWKWARD_POTION
+    ingredient: ENDER_EYE
+    brew-time: 1000
+    result:
+      name: "<gradient:light_purple:purple>&l✨ Potion of Enlightenment</gradient>"
+      lore:
+        - "<gray>Advances your mystical journey"
+        - "<light_purple>Grants quest progression"
+        - "<aqua>Duration: 30 seconds"
+      color: "#9B30FF"
+      glowing: true
+      effects:
+        - type: GLOWING
+          duration: 600  # 30 seconds
+          amplifier: 0
+        - type: NIGHT_VISION
+          duration: 600
+          amplifier: 0
+    
+    drink-commands:
+      - "[console] advancement grant {player} only custom:found_enlightenment"
+      - "[player] me has achieved enlightenment!"
+      - "[console] tellraw @a {\"text\":\"{player} has found enlightenment!\",\"color\":\"light_purple\"}"
+      - "[console] particle minecraft:end_rod {player} ~ ~1 ~ 1 1 1 0.05 200"
+      - "[console] playsound minecraft:entity.player.levelup player @a ~ ~ ~ 2 0.5"
+    
+    expire-commands:
+      - "[console] tellraw {player} {\"text\":\"The enlightenment fades, but wisdom remains.\",\"color\":\"gray\",\"italic\":true}"
+  
+  # ===== SPEED RUNNER =====
+  
+  parkour_master_potion:
+    base-potion: AWKWARD_POTION
+    ingredient: FEATHER
+    brew-time: 400
+    result:
+      name: "<gradient:green:lime>&l🏃 Parkour Master Potion</gradient>"
+      lore:
+        - "<gray>Perfect for timed challenges"
+        - "<green>Speed IV + Jump Boost III"
+        - "<yellow>Duration: 45 seconds"
+      color: "#00FF00"
+      glowing: true
+      effects:
+        - type: SPEED
+          duration: 900  # 45 seconds
+          amplifier: 3
+        - type: JUMP_BOOST
+          duration: 900
+          amplifier: 2
+    
+    drink-commands:
+      - "[console] title {player} title {\"text\":\"GO!\",\"color\":\"green\",\"bold\":true}"
+      - "[console] title {player} subtitle {\"text\":\"45 seconds on the clock!\",\"color\":\"yellow\"}"
+      - "[console] playsound minecraft:block.note_block.pling player {player} ~ ~ ~ 1 2"
+      - "[console] scoreboard players set {player} ParkourTime 45"
+    
+    expire-commands:
+      - "[console] title {player} title {\"text\":\"TIME'S UP!\",\"color\":\"red\",\"bold\":true}"
+      - "[console] playsound minecraft:entity.wither.spawn player {player} ~ ~ ~ 0.5 2"
+      - "[console] scoreboard players set {player} ParkourTime 0"
+  
+  # ===== BOSS BATTLE BERSERKER =====
+  
+  berserker_rage:
+    base-potion: AWKWARD_POTION
+    ingredient: WITHER_ROSE
+    brew-time: 1200
+    result:
+      name: "<gradient:dark_red:black>&l😈 Berserker Rage</gradient>"
+      lore:
+        - "<gray>Immense power at a terrible cost"
+        - "<dark_red>Strength V + Speed III"
+        - "<red>⚠ Weakness after effect"
+        - "<yellow>Duration: 30 seconds"
+      color: "#8B0000"
+      glowing: true
+      effects:
+        - type: STRENGTH
+          duration: 600  # 30 seconds
+          amplifier: 4
+        - type: SPEED
+          duration: 600
+          amplifier: 2
+    
+    drink-commands:
+      - "[console] title {player} title {\"text\":\"RAGE!\",\"color\":\"dark_red\",\"bold\":true,\"obfuscated\":true}"
+      - "[console] playsound minecraft:entity.ravager.roar player @a ~ ~ ~ 10 0.8"
+      - "[console] tellraw @a {\"text\":\"{player} has entered BERSERKER MODE!\",\"color\":\"dark_red\",\"bold\":true}"
+      - "[console] particle minecraft:angry_villager {player} ~ ~1 ~ 0.5 0.5 0.5 0.1 100"
+      - "[console] particle minecraft:lava {player} ~ ~0.5 ~ 1 1 1 0.01 50"
+    
+    expire-commands:
+      - "[console] effect give {player} weakness 300 2"
+      - "[console] effect give {player} slowness 300 1"
+      - "[console] effect give {player} nausea 100 0"
+      - "[console] tellraw {player} {\"text\":\"The rage subsides... exhaustion overwhelms you.\",\"color\":\"gray\",\"italic\":true}"
+      - "[console] playsound minecraft:entity.zombie.ambient player {player} ~ ~ ~ 1 0.5"
+  
+  # ===== FLIGHT TEMPORARY =====
+  
+  creative_flight_potion:
+    base-potion: AWKWARD_POTION
+    ingredient: ELYTRA
+    brew-time: 1500
+    result:
+      name: "<gradient:aqua:blue>&l🕊 Creative Flight Potion</gradient>"
+      lore:
+        - "<gray>Grants temporary creative flight"
+        - "<aqua>Duration: 1 minute"
+        - "<red>⚠ Admin approval required"
+      color: "#00CED1"
+      glowing: true
+      effects:
+        - type: SLOW_FALLING
+          duration: 1200  # 1 minute
+          amplifier: 0
+        - type: LEVITATION
+          duration: 20
+          amplifier: 10
+    
+    drink-commands:
+      - "[console] gamemode creative {player}"
+      - "[console] tellraw {player} {\"text\":\"✈ You can now fly for 1 minute!\",\"color\":\"aqua\",\"bold\":true}"
+      - "[console] tellraw @a[permission=brewmasters.admin] {\"text\":\"⚠ {player} is using creative flight potion\",\"color\":\"yellow\"}"
+      - "[console] playsound minecraft:entity.bat.takeoff player {player} ~ ~ ~ 1 1.5"
+    
+    expire-commands:
+      - "[console] gamemode survival {player}"
+      - "[console] tellraw {player} {\"text\":\"Your flight time has expired!\",\"color\":\"red\"}"
+      - "[console] playsound minecraft:entity.bat.death player {player} ~ ~ ~ 1 1"
+    
+    # Require admin permission
+    conditions:
+      permission: "brewmasters.admin"
+      permission-required: true
+  
+  # ===== MINING EXPEDITION =====
+  
+  miners_blessing:
+    base-potion: AWKWARD_POTION
+    ingredient: DIAMOND_PICKAXE
+    brew-time: 800
+    result:
+      name: "<gradient:gray:white>&l⛏ Miner's Blessing</gradient>"
+      lore:
+        - "<gray>Perfect for mining expeditions"
+        - "<white>Haste III + Night Vision"
+        - "<aqua>+ Mining buffs"
+        - "<yellow>Duration: 10 minutes"
+      color: "#C0C0C0"
+      effects:
+        - type: HASTE
+          duration: 12000  # 10 minutes
+          amplifier: 2
+        - type: NIGHT_VISION
+          duration: 12000
+          amplifier: 0
+    
+    drink-commands:
+      - "[console] give {player} torch 64"
+      - "[console] tellraw {player} {\"text\":\"⛏ Mining buffs activated! Here are some torches.\",\"color\":\"white\"}"
+      - "[console] playsound minecraft:block.anvil.use player {player} ~ ~ ~ 0.5 1.5"
+    
+    expire-commands:
+      - "[console] tellraw {player} {\"text\":\"Your mining buffs have worn off.\",\"color\":\"gray\"}"

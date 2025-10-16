@@ -18,14 +18,18 @@ public class RecipeManager {
 
     private final BrewMasters plugin;
     private final Map<String, BrewingRecipe> recipes;
+    // Index recipes by base potion for faster lookups
+    private final Map<Material, List<BrewingRecipe>> recipesByBase;
 
     public RecipeManager(BrewMasters plugin) {
         this.plugin = plugin;
         this.recipes = new HashMap<>();
+        this.recipesByBase = new HashMap<>();
     }
 
     public void loadRecipes() {
         recipes.clear();
+        recipesByBase.clear();
 
         ConfigurationSection recipesSection = plugin.getConfig().getConfigurationSection("recipes");
         if (recipesSection == null) {
@@ -38,6 +42,8 @@ public class RecipeManager {
                 BrewingRecipe recipe = loadRecipe(recipeId, recipesSection.getConfigurationSection(recipeId));
                 if (recipe != null) {
                     recipes.put(recipeId, recipe);
+                    // Index by base potion
+                    recipesByBase.computeIfAbsent(recipe.getBasePotion(), k -> new ArrayList<>()).add(recipe);
                     plugin.getLogger().info("Loaded recipe: " + recipeId);
                 }
             } catch (Exception e) {
@@ -128,6 +134,16 @@ public class RecipeManager {
         // Parse custom model data
         if (section.contains("result.custom-model-data")) {
             builder.customModelData(section.getInt("result.custom-model-data"));
+        }
+        
+        // Parse drink commands
+        if (section.contains("drink-commands")) {
+            builder.drinkCommands(section.getStringList("drink-commands"));
+        }
+        
+        // Parse expire commands
+        if (section.contains("expire-commands")) {
+            builder.expireCommands(section.getStringList("expire-commands"));
         }
 
         // Parse conditions
@@ -260,7 +276,13 @@ public class RecipeManager {
     }
 
     public BrewingRecipe findRecipe(Material basePotion, Material ingredient) {
-        for (BrewingRecipe recipe : recipes.values()) {
+        // Use indexed lookup for O(1) base potion matching
+        List<BrewingRecipe> candidates = recipesByBase.get(basePotion);
+        if (candidates == null) {
+            return null;
+        }
+        
+        for (BrewingRecipe recipe : candidates) {
             if (recipe.matches(basePotion, ingredient)) {
                 return recipe;
             }
@@ -275,7 +297,13 @@ public class RecipeManager {
      * @return The matching recipe, or null if none found
      */
     public BrewingRecipe findRecipe(Material basePotion, ItemStack ingredientItem) {
-        for (BrewingRecipe recipe : recipes.values()) {
+        // Use indexed lookup for O(1) base potion matching
+        List<BrewingRecipe> candidates = recipesByBase.get(basePotion);
+        if (candidates == null) {
+            return null;
+        }
+        
+        for (BrewingRecipe recipe : candidates) {
             if (recipe.matches(basePotion, ingredientItem)) {
                 return recipe;
             }

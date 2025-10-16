@@ -3,7 +3,6 @@ package net.pwing.brewmasters.managers;
 import net.pwing.brewmasters.BrewMasters;
 import net.pwing.brewmasters.models.BrewingRecipe;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.block.BrewingStand;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -38,6 +37,13 @@ public class BrewingSpeedManager {
      * Load speed configuration from config.yml
      */
     public void loadConfiguration() {
+        loadSpeedSettings();
+    }
+    
+    /**
+     * Load speed settings (public for reload)
+     */
+    public void loadSpeedSettings() {
         ConfigurationSection speedSection = plugin.getConfig().getConfigurationSection("brewing-speeds");
         if (speedSection == null) {
             speedSystemEnabled = false;

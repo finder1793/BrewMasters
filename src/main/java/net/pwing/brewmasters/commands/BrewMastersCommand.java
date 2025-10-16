@@ -3,6 +3,8 @@ package net.pwing.brewmasters.commands;
 import net.pwing.brewmasters.BrewMasters;
 import net.pwing.brewmasters.models.BrewingRecipe;
 import net.pwing.brewmasters.models.BrewingChain;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -16,6 +18,11 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Main command handler for BrewMasters
+ * Note: Uses legacy ChatColor for formatted command output alongside Adventure API for simple messages
+ */
+@SuppressWarnings("deprecation")
 public class BrewMastersCommand implements CommandExecutor, TabCompleter {
 
     private final BrewMasters plugin;
@@ -34,17 +41,17 @@ public class BrewMastersCommand implements CommandExecutor, TabCompleter {
         switch (args[0].toLowerCase()) {
             case "reload":
                 if (!sender.hasPermission("brewmasters.reload")) {
-                    sender.sendMessage(ChatColor.RED + "You don't have permission to use this command.");
+                    sender.sendMessage(Component.text("You don't have permission to use this command.", NamedTextColor.RED));
                     return true;
                 }
                 plugin.reload();
-                sender.sendMessage(ChatColor.GREEN + "BrewMasters configuration reloaded! Loaded " +
-                        plugin.getRecipeManager().getRecipeCount() + " recipes.");
+                sender.sendMessage(Component.text("BrewMasters configuration reloaded! Loaded " +
+                        plugin.getRecipeManager().getRecipeCount() + " recipes.", NamedTextColor.GREEN));
                 return true;
 
             case "list":
                 if (!sender.hasPermission("brewmasters.list")) {
-                    sender.sendMessage(ChatColor.RED + "You don't have permission to use this command.");
+                    sender.sendMessage(Component.text("You don't have permission to use this command.", NamedTextColor.RED));
                     return true;
                 }
                 listRecipes(sender);
@@ -52,7 +59,7 @@ public class BrewMastersCommand implements CommandExecutor, TabCompleter {
 
             case "recipes":
                 if (!(sender instanceof Player)) {
-                    sender.sendMessage(ChatColor.RED + "This command can only be used by players.");
+                    sender.sendMessage(Component.text("This command can only be used by players.", NamedTextColor.RED));
                     return true;
                 }
                 if (args.length > 1 && args[1].equalsIgnoreCase("gui")) {
@@ -64,11 +71,11 @@ public class BrewMastersCommand implements CommandExecutor, TabCompleter {
 
             case "discover":
                 if (!sender.hasPermission("brewmasters.admin")) {
-                    sender.sendMessage(ChatColor.RED + "You don't have permission to use this command.");
+                    sender.sendMessage(Component.text("You don't have permission to use this command.", NamedTextColor.RED));
                     return true;
                 }
                 if (args.length < 3) {
-                    sender.sendMessage(ChatColor.RED + "Usage: /brewmasters discover <player> <recipe>");
+                    sender.sendMessage(Component.text("Usage: /brewmasters discover <player> <recipe>", NamedTextColor.RED));
                     return true;
                 }
                 handleDiscoverCommand(sender, args[1], args[2]);
@@ -76,7 +83,7 @@ public class BrewMastersCommand implements CommandExecutor, TabCompleter {
 
             case "achievements":
                 if (!(sender instanceof Player)) {
-                    sender.sendMessage(ChatColor.RED + "This command can only be used by players.");
+                    sender.sendMessage(Component.text("This command can only be used by players.", NamedTextColor.RED));
                     return true;
                 }
                 if (args.length > 1 && args[1].equalsIgnoreCase("gui")) {
@@ -88,7 +95,7 @@ public class BrewMastersCommand implements CommandExecutor, TabCompleter {
 
             case "speed":
                 if (!sender.hasPermission("brewmasters.speed")) {
-                    sender.sendMessage(ChatColor.RED + "You don't have permission to use this command.");
+                    sender.sendMessage(Component.text("You don't have permission to use this command.", NamedTextColor.RED));
                     return true;
                 }
                 handleSpeedCommand(sender, args);
@@ -99,7 +106,7 @@ public class BrewMastersCommand implements CommandExecutor, TabCompleter {
 
             case "chain":
                 if (args.length < 2) {
-                    sender.sendMessage(ChatColor.RED + "Usage: /brewmasters chain <chainId>");
+                    sender.sendMessage(Component.text("Usage: /brewmasters chain <chainId>", NamedTextColor.RED));
                     return true;
                 }
                 return handleChainCommand(sender, args);

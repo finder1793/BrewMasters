@@ -4,6 +4,8 @@ A Spigot/Paper plugin that allows you to define custom brewing and alchemy recip
 
 ## Features
 
+### 🔥 Core Brewing System
+
 - 🧪 **Custom Brewing Recipes** - Define your own brewing recipes with any base potion and ingredient
 - 🎨 **Custom Colors** - Set custom RGB or hex colors for your potions
 - ✨ **Custom Effects** - Add any combination of potion effects with custom durations and amplifiers
@@ -17,6 +19,26 @@ A Spigot/Paper plugin that allows you to define custom brewing and alchemy recip
 - 🎭 **MythicMobs & Crucible Support** - Use custom items from MythicMobs and Crucible as brewing ingredients
 - 🎯 **Recipe Conditions** - Restrict recipes by biome, world, permission, time, weather, Y-level, and PlaceholderAPI
 - 🔌 **PlaceholderAPI Support** - Advanced conditions using player stats, economy, ranks, and more
+- ⚡ **Command Execution** - Run commands when potions are drunk or when effects expire
+- 🔄 **Offline Effect Tracking** - Expire commands execute even if player logs out
+
+### 🎯 Progression & Discovery
+
+- 🔍 **Recipe Discovery System** - Players must discover recipes before using them
+- 🎁 **Discovery Methods** - Random chance, achievements, first brew, permissions, and commands
+- 📖 **Interactive Recipe Book GUI** - Beautiful GUI to browse discovered recipes
+- 🏆 **Achievement System** - 30+ configurable achievements with rewards
+- 🎯 **Achievement GUI** - Fully customizable achievement tracking interface
+- ⛓️ **Brewing Chains** - Multi-step recipe sequences with chain-specific rewards
+- ⚡ **Brewing Speed Modifiers** - Permission-based brew time multipliers
+
+### 📊 Statistics & Integration
+
+- 📈 **Comprehensive Statistics** - Track brewing activity for every player
+- 🏅 **Brewing Ranks** - Automatic ranking system (Newcomer → Grandmaster)
+- 🔢 **PlaceholderAPI Expansion** - 30+ placeholders for chat, scoreboards, holograms, etc.
+- 📊 **Detailed Tracking** - Per-recipe brew counts, discovery progress, achievements, chains
+- 🎮 **Third-Party Integration** - Works with FeatherBoard, TAB, DeluxeMenus, BossBarAPI, and more
 
 ## Requirements
 
@@ -147,6 +169,10 @@ SPEED, SLOWNESS, HASTE, MINING_FATIGUE, STRENGTH, INSTANT_HEALTH, INSTANT_DAMAGE
 
 - `/brewmasters reload` - Reload the configuration
 - `/brewmasters list` - List all custom recipes
+- `/brewmasters recipes [gui]` - View discovered recipes (GUI optional)
+- `/brewmasters achievements [gui]` - View achievements (GUI optional)
+- `/brewmasters discover <player> <recipe>` - Force discover a recipe for a player
+- `/brewmasters chains` - View brewing chains
 - `/brewmasters integrations` - Show integration status (MythicMobs, Crucible)
 - `/brewmasters help` - Show help message
 
@@ -157,6 +183,41 @@ Aliases: `/bm`, `/brew`
 - `brewmasters.admin` - Access to all commands (default: op)
 - `brewmasters.reload` - Reload configuration (default: op)
 - `brewmasters.list` - List recipes (default: op)
+- `brewmasters.recipes` - View discovered recipes (default: true)
+- `brewmasters.achievements` - View achievements (default: true)
+- `brewmasters.discover` - Force discover recipes (default: op)
+- `brewmasters.speed.fast` - Brew 2x faster (default: false)
+- `brewmasters.speed.veryfast` - Brew 4x faster (default: false)
+
+## PlaceholderAPI Integration
+
+BrewMasters provides 30+ placeholders for displaying brewing statistics. See [PLACEHOLDERS.md](PLACEHOLDERS.md) for full documentation.
+
+### Quick Examples
+
+```
+%brewmasters_total_brewed% - Total potions brewed
+%brewmasters_rank% - Brewing rank (Newcomer → Grandmaster)
+%brewmasters_recipes_discovered% - Recipes discovered count
+%brewmasters_discovery_percent% - Discovery percentage
+%brewmasters_achievements% - Achievements unlocked
+```
+
+### Usage in Other Plugins
+
+**Chat Format:**
+```yaml
+format: '{DISPLAYNAME}&7: {MESSAGE} &8[&6{brewmasters_rank}&8]'
+```
+
+**Scoreboard:**
+```yaml
+lines:
+  - '&7Rank: &e%brewmasters_rank%'
+  - '&7Brewed: &a%brewmasters_total_brewed%'
+```
+
+See [PLACEHOLDERS.md](PLACEHOLDERS.md) for complete list and examples.
 
 ## How It Works
 

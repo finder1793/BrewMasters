@@ -3,7 +3,9 @@ package net.pwing.brewmasters.managers;
 import net.pwing.brewmasters.BrewMasters;
 import net.pwing.brewmasters.models.BrewingRecipe;
 import net.pwing.brewmasters.models.DiscoveryMethod;
-import org.bukkit.ChatColor;
+import net.pwing.brewmasters.utils.TextUtils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.configuration.ConfigurationSection;
@@ -41,9 +43,17 @@ public class DiscoveryManager {
         discoveryEnabled = discoverySection.getBoolean("enabled", true);
         showDiscoveryNotifications = discoverySection.getBoolean("show-notifications", true);
 
+        loadDiscoveryMethods();
+    }
+    
+    /**
+     * Load discovery methods from config (public for reload)
+     */
+    public void loadDiscoveryMethods() {
         // Load discovery methods for each recipe
-        ConfigurationSection methodsSection = discoverySection.getConfigurationSection("methods");
+        ConfigurationSection methodsSection = plugin.getConfig().getConfigurationSection("discovery.methods");
         if (methodsSection != null) {
+            discoveryMethods.clear();
             for (String recipeId : methodsSection.getKeys(false)) {
                 ConfigurationSection recipeSection = methodsSection.getConfigurationSection(recipeId);
                 if (recipeSection != null) {
@@ -68,6 +78,10 @@ public class DiscoveryManager {
 
             // Load type-specific parameters
             switch (methodType) {
+                case AUTOMATIC:
+                    // No additional parameters needed for automatic discovery
+                    break;
+
                 case BIOME_VISIT:
                     List<String> biomes = section.getStringList("biomes");
                     builder.biomes(biomes);
@@ -208,15 +222,21 @@ public class DiscoveryManager {
             return;
         }
 
-        String recipeName = recipe.getResultName() != null ? ChatColor.stripColor(recipe.getResultName())
+        String recipeName = recipe.getResultName() != null ? TextUtils.stripColor(recipe.getResultName())
                 : "Custom Recipe";
 
-        player.sendMessage("");
-        player.sendMessage(ChatColor.GOLD + "✨ " + ChatColor.YELLOW + "Recipe Discovered!" + ChatColor.GOLD + " ✨");
-        player.sendMessage(ChatColor.WHITE + "You have discovered: " + ChatColor.AQUA + recipeName);
-        player.sendMessage(ChatColor.GRAY + "Use " + ChatColor.GREEN + "/brewmasters recipes" +
-                ChatColor.GRAY + " to view your recipes");
-        player.sendMessage("");
+        player.sendMessage(Component.empty());
+        player.sendMessage(TextUtils.miniMessage(
+            "<gradient:gold:yellow>✨ Recipe Discovered! ✨</gradient>"
+        ));
+        player.sendMessage(
+            Component.text("You have discovered: ", NamedTextColor.WHITE)
+                .append(TextUtils.rainbow(recipeName))
+        );
+        player.sendMessage(TextUtils.miniMessage(
+            "<gray>Use <green>/brewmasters recipes</green> to view your recipes"
+        ));
+        player.sendMessage(Component.empty());
 
         // Play discovery sound
         player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.5f);

@@ -1,0 +1,138 @@
+# Recipe Details GUI Configuration
+# Detailed view of a specific brewing recipe
+
+# GUI Settings
+gui:
+  title: "<gradient:dark_blue:blue>Recipe: {recipe_name}</gradient>"
+  size: 54
+
+# Background filler
+filler:
+  enabled: true
+  material: BLACK_STAINED_GLASS_PANE
+  name: " "
+  custom-model-data: 0
+
+# Layout (slot positions)
+layout:
+  result-slot: 22
+  base-slot: 20
+  ingredient-slot: 24
+  brewing-stand-slot: 13
+  arrow-1-slot: 21
+  arrow-2-slot: 23
+  arrow-3-slot: 31
+  effects-slot: 15
+  conditions-slot: 33
+  type-info-slot: 11
+
+# Base potion display
+base-potion:
+  name: "<gradient:yellow:gold>Base Potion</gradient>"
+  lore:
+    - "<gray>{base_material}"
+    - ""
+    - "<gray>This is the base potion"
+    - "<gray>required for this recipe"
+
+# Ingredient display
+ingredient:
+  name: "<gradient:green:lime>Ingredient</gradient>"
+  lore:
+    - "<gray>{ingredient_name}"
+    - ""
+    - "<gray>This ingredient is added"
+    - "<gray>to the base potion"
+  fallback-material: GLOWSTONE_DUST
+  fallback-name: "<red>Unknown Ingredient"
+
+# Brewing stand visualization
+brewing-stand:
+  material: BREWING_STAND
+  name: "<gradient:gold:orange>⚗ Brewing Process</gradient>"
+  lore:
+    - "<gray>1. Place base potion in brewing stand"
+    - "<gray>2. Add ingredient to top slot"
+    - "<gray>3. Add blaze powder as fuel"
+    - "<gray>4. Wait for brewing to complete"
+    - ""
+    - "<yellow>Brew Time: <white>{brew_time} seconds"
+  custom-model-data: 0
+
+# Process arrows
+process-arrows:
+  material: ARROW
+  step-1:
+    name: "<green>Step 1"
+    lore:
+      - "<gray>Place base potion"
+  step-2:
+    name: "<green>Step 2"
+    lore:
+      - "<gray>Add ingredient"
+  step-3:
+    name: "<green>Step 3"
+    lore:
+      - "<gray>Result!"
+  custom-model-data: 0
+
+# Effects panel
+effects-panel:
+  material: GLOWSTONE_DUST
+  name: "<gradient:light_purple:purple>✨ Potion Effects</gradient>"
+  lore-header:
+    - "<gray>This potion grants:"
+  effect-line: "<gray>• <white>{effect_name} {level} <dark_gray>({duration})"
+  no-effects: "<gray>No special effects"
+  custom-model-data: 0
+
+# Conditions panel
+conditions-panel:
+  material: REDSTONE
+  name: "<gradient:red:dark_red>⚠ Brewing Conditions</gradient>"
+  lore-header:
+    - "<gray>This recipe requires:"
+  condition-line: "<gray>• {condition_description}"
+  no-conditions: "<green>No special conditions required"
+  custom-model-data: 0
+
+# Recipe type info
+type-panel:
+  name: "<gradient:aqua:blue>ℹ Recipe Type</gradient>"
+  lore:
+    - "<gray>Type: <white>{potion_type}"
+    - ""
+    - "{glowing_text}"
+    - "{custom_model_text}"
+  glowing-text: "<yellow>✨ Glowing Effect"
+  custom-model-text: "<gray>Custom Model: <white>{model_data}"
+  materials:
+    NORMAL: POTION
+    SPLASH: SPLASH_POTION
+    LINGERING: LINGERING_POTION
+  custom-model-data: 0
+
+# Navigation
+navigation:
+  back:
+    slot: 45
+    material: ARROW
+    name: "<yellow>← Back to Recipe Book"
+    lore:
+      - "<gray>Return to the recipe list"
+    custom-model-data: 0
+  
+  close:
+    slot: 49
+    material: BARRIER
+    name: "<red>Close"
+    lore:
+      - "<gray>Close the recipe book"
+    custom-model-data: 0
+
+# Sounds
+sounds:
+  open: BLOCK_CHEST_OPEN
+  close: BLOCK_CHEST_CLOSE
+  click: UI_BUTTON_CLICK
+  back: ITEM_BOOK_PAGE_TURN

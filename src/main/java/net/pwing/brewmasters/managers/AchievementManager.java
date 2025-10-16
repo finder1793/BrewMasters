@@ -3,7 +3,9 @@ package net.pwing.brewmasters.managers;
 import net.pwing.brewmasters.BrewMasters;
 import net.pwing.brewmasters.models.Achievement;
 import net.pwing.brewmasters.models.PlayerData;
-import org.bukkit.ChatColor;
+import net.pwing.brewmasters.utils.TextUtils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -173,6 +175,11 @@ public class AchievementManager {
                 case CHAINS_COMPLETED:
                     unlocked = data.getStat("chains_completed") >= achievement.getTargetValue();
                     break;
+
+                case SPECIFIC_RECIPE_BREWED:
+                case RECIPE_SET_DISCOVERED:
+                    // These are handled by separate methods
+                    break;
             }
 
             if (unlocked) {
@@ -246,17 +253,19 @@ public class AchievementManager {
      * Send achievement notification to player
      */
     private void sendAchievementNotification(Player player, Achievement achievement) {
-        player.sendMessage("");
-        player.sendMessage(
-                ChatColor.GOLD + "🏆 " + ChatColor.YELLOW + "Achievement Unlocked!" + ChatColor.GOLD + " 🏆");
-        player.sendMessage(ChatColor.WHITE + achievement.getName());
-        player.sendMessage(ChatColor.GRAY + achievement.getDescription());
+        player.sendMessage(Component.empty());
+        player.sendMessage(TextUtils.miniMessage(
+            "<gradient:gold:yellow>🏆 Achievement Unlocked! 🏆</gradient>"
+        ));
+        // Achievement name might already have MiniMessage formatting from config
+        player.sendMessage(TextUtils.parseAuto(achievement.getName()));
+        player.sendMessage(Component.text(achievement.getDescription(), NamedTextColor.GRAY));
 
         if (achievement.getReward() != null) {
-            player.sendMessage(ChatColor.GREEN + "You received a reward!");
+            player.sendMessage(TextUtils.miniMessage("<gradient:green:lime>✨ You received a reward!</gradient>"));
         }
 
-        player.sendMessage("");
+        player.sendMessage(Component.empty());
 
         // Play achievement sound
         player.playSound(player.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 1.0f, 1.0f);

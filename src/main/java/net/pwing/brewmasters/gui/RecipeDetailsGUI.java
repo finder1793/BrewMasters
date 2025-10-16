@@ -1,10 +1,14 @@
 package net.pwing.brewmasters.gui;
 
+import net.kyori.adventure.text.Component;
 import net.pwing.brewmasters.BrewMasters;
+import net.pwing.brewmasters.gui.config.RecipeDetailsGUIConfig;
 import net.pwing.brewmasters.models.BrewingRecipe;
-import org.bukkit.Bukkit;
+import net.pwing.brewmasters.utils.InventoryUtils;
+import net.pwing.brewmasters.utils.TextUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -14,22 +18,27 @@ import org.bukkit.potion.PotionEffect;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /**
  * GUI for displaying detailed information about a specific recipe
+ * Fully configurable with MiniMessage support and custom layouts
  */
+@SuppressWarnings("deprecation")
 public class RecipeDetailsGUI {
 
     private final BrewMasters plugin;
     private final Player player;
     private final BrewingRecipe recipe;
     private final RecipeBookGUI parentGUI;
+    private final RecipeDetailsGUIConfig config;
 
     public RecipeDetailsGUI(BrewMasters plugin, Player player, BrewingRecipe recipe, RecipeBookGUI parentGUI) {
         this.plugin = plugin;
         this.player = player;
         this.recipe = recipe;
         this.parentGUI = parentGUI;
+        this.config = plugin.getGUIConfigManager().getRecipeDetailsConfig();
     }
 
     /**
@@ -39,27 +48,41 @@ public class RecipeDetailsGUI {
         Inventory gui = createGUI();
         plugin.getGUIListener().openRecipeDetails(player, this);
         player.openInventory(gui);
+        
+        // Play open sound
+        player.playSound(player.getLocation(), config.getOpenSound(), 1.0f, 1.0f);
     }
 
     /**
-     * Create the GUI inventory
+     * Create the GUI inventory with config-based layout
      */
     private Inventory createGUI() {
-        String recipeName = recipe.getResultName() != null ? ChatColor.stripColor(recipe.getResultName())
+        // Get recipe name for title
+        String recipeName = recipe.getResultName() != null ? TextUtils.stripColor(recipe.getResultName())
                 : recipe.getId();
 
-        Inventory gui = Bukkit.createInventory(null, 54, ChatColor.DARK_BLUE + "Recipe: " + recipeName);
+        // Create title with placeholder
+        String titleText = config.getTitle().replace("{recipe_name}", recipeName);
+        Component titleComponent = TextUtils.parseAuto(titleText);
+        
+        // Create inventory with configured size
+        Inventory gui = InventoryUtils.createInventory(config.getSize(), titleComponent);
+        
+        // Add filler items if enabled
+        if (config.isFillerEnabled()) {
+            addFillerItems(gui);
+        }
 
-        // Result potion (center)
+        // Result potion (configured slot)
         ItemStack resultItem = recipe.createResultPotion();
-        gui.setItem(22, resultItem);
+        gui.setItem(config.getResultSlot(), resultItem);
 
-        // Base potion (left)
+        // Base potion (configured slot)
         ItemStack baseItem = createIngredientItem(recipe.getBasePotion(), "Base Potion",
                 "This is the base potion", "required for this recipe");
-        gui.setItem(20, baseItem);
+        gui.setItem(config.getBaseSlot(), baseItem);
 
-        // Ingredient (right)
+        // Ingredient (configured slot)
         ItemStack ingredientItem = recipe.getIngredient().getExampleItem();
         if (ingredientItem != null) {
             ItemMeta meta = ingredientItem.getItemMeta();
@@ -83,18 +106,37 @@ public class RecipeDetailsGUI {
                 ingredientItem.setItemMeta(meta);
             }
         }
-        gui.setItem(24, ingredientItem);
+        gui.setItem(config.getIngredientSlot(), ingredientItem);
 
-        // Brewing process visualization
+        // Brewing process visualization (uses configured slots)
         addBrewingVisualization(gui);
 
-        // Recipe information
+        // Recipe information (uses configured slots)
         addRecipeInformation(gui);
 
-        // Navigation
+        // Navigation (uses configured slots)
         addNavigationItems(gui);
 
         return gui;
+    }
+    
+    /**
+     * Add filler items to empty slots
+     */
+    private void addFillerItems(Inventory gui) {
+        Material fillerMaterial = config.getFillerMaterial();
+        String fillerName = config.getFillerName();
+        int customModelData = config.getFillerCustomModelData();
+        
+        ItemStack filler = InventoryUtils.builder(fillerMaterial)
+                .displayNameMini(fillerName)
+                .customModelData(customModelData > 0 ? customModelData : 0)
+                .build();
+        
+        // Fill all slots initially
+        for (int i = 0; i < gui.getSize(); i++) {
+            gui.setItem(i, filler);
+        }
     }
 
     /**
@@ -123,10 +165,10 @@ public class RecipeDetailsGUI {
     }
 
     /**
-     * Add brewing process visualization
+     * Add brewing process visualization using configured slots
      */
     private void addBrewingVisualization(Inventory gui) {
-        // Brewing stand
+        // Brewing stand at configured slot
         ItemStack brewingStand = new ItemStack(Material.BREWING_STAND);
         ItemMeta standMeta = brewingStand.getItemMeta();
         if (standMeta != null) {
@@ -146,16 +188,16 @@ public class RecipeDetailsGUI {
             standMeta.setLore(lore);
             brewingStand.setItemMeta(standMeta);
         }
-        gui.setItem(13, brewingStand);
+        gui.setItem(config.getBrewingStandSlot(), brewingStand);
 
-        // Arrows showing process
+        // Arrows showing process at configured slots
         ItemStack arrow1 = createArrow("Step 1", "Place base potion");
         ItemStack arrow2 = createArrow("Step 2", "Add ingredient");
         ItemStack arrow3 = createArrow("Step 3", "Result!");
 
-        gui.setItem(21, arrow1);
-        gui.setItem(23, arrow2);
-        gui.setItem(31, arrow3);
+        gui.setItem(config.getArrow1Slot(), arrow1);
+        gui.setItem(config.getArrow2Slot(), arrow2);
+        gui.setItem(config.getArrow3Slot(), arrow3);
     }
 
     /**
@@ -173,10 +215,10 @@ public class RecipeDetailsGUI {
     }
 
     /**
-     * Add recipe information panel
+     * Add recipe information panel using configured slots
      */
     private void addRecipeInformation(Inventory gui) {
-        // Effects information
+        // Effects information at configured slot
         if (!recipe.getEffects().isEmpty()) {
             ItemStack effectsItem = new ItemStack(Material.GLOWSTONE_DUST);
             ItemMeta effectsMeta = effectsItem.getItemMeta();
@@ -196,10 +238,10 @@ public class RecipeDetailsGUI {
                 effectsMeta.setLore(lore);
                 effectsItem.setItemMeta(effectsMeta);
             }
-            gui.setItem(15, effectsItem);
+            gui.setItem(config.getEffectsSlot(), effectsItem);
         }
 
-        // Conditions information
+        // Conditions information at configured slot
         if (!recipe.getConditions().isEmpty()) {
             ItemStack conditionsItem = new ItemStack(Material.REDSTONE);
             ItemMeta conditionsMeta = conditionsItem.getItemMeta();
@@ -214,10 +256,10 @@ public class RecipeDetailsGUI {
                 conditionsMeta.setLore(lore);
                 conditionsItem.setItemMeta(conditionsMeta);
             }
-            gui.setItem(33, conditionsItem);
+            gui.setItem(config.getConditionsSlot(), conditionsItem);
         }
 
-        // Recipe type information
+        // Recipe type information at configured slot
         ItemStack typeItem = new ItemStack(getTypeIcon());
         ItemMeta typeMeta = typeItem.getItemMeta();
         if (typeMeta != null) {
@@ -237,7 +279,7 @@ public class RecipeDetailsGUI {
             typeMeta.setLore(lore);
             typeItem.setItemMeta(typeMeta);
         }
-        gui.setItem(11, typeItem);
+        gui.setItem(config.getTypeInfoSlot(), typeItem);
     }
 
     /**
@@ -255,46 +297,80 @@ public class RecipeDetailsGUI {
     }
 
     /**
-     * Add navigation items
+     * Add navigation items using config
      */
     private void addNavigationItems(Inventory gui) {
         // Back button
-        ItemStack backButton = new ItemStack(Material.ARROW);
-        ItemMeta backMeta = backButton.getItemMeta();
-        if (backMeta != null) {
-            backMeta.setDisplayName(ChatColor.YELLOW + "Back to Recipe Book");
-            backMeta.setLore(Arrays.asList(ChatColor.GRAY + "Return to the recipe list"));
-            backButton.setItemMeta(backMeta);
+        Map<String, Object> backData = config.getNavigationItem("back");
+        int backSlot = (int) backData.getOrDefault("slot", 45);
+        Material backMaterial = Material.valueOf((String) backData.getOrDefault("material", "ARROW"));
+        String backName = (String) backData.getOrDefault("name", "<yellow>Back to Recipe Book</yellow>");
+        @SuppressWarnings("unchecked")
+        List<String> backLoreLines = (List<String>) backData.getOrDefault("lore", new ArrayList<>());
+        int backCustomModelData = (int) backData.getOrDefault("custom-model-data", 0);
+        
+        InventoryUtils.ItemBuilder backBuilder = InventoryUtils.builder(backMaterial)
+                .displayNameMini(backName);
+        
+        List<Component> backLore = new ArrayList<>();
+        for (String line : backLoreLines) {
+            backLore.add(TextUtils.parseAuto(line));
         }
-        gui.setItem(45, backButton);
+        backBuilder.lore(backLore);
+        
+        if (backCustomModelData > 0) {
+            backBuilder.customModelData(backCustomModelData);
+        }
+        
+        gui.setItem(backSlot, backBuilder.build());
 
         // Close button
-        ItemStack closeButton = new ItemStack(Material.BARRIER);
-        ItemMeta closeMeta = closeButton.getItemMeta();
-        if (closeMeta != null) {
-            closeMeta.setDisplayName(ChatColor.RED + "Close");
-            closeMeta.setLore(Arrays.asList(ChatColor.GRAY + "Close the recipe book"));
-            closeButton.setItemMeta(closeMeta);
+        Map<String, Object> closeData = config.getNavigationItem("close");
+        int closeSlot = (int) closeData.getOrDefault("slot", 49);
+        Material closeMaterial = Material.valueOf((String) closeData.getOrDefault("material", "BARRIER"));
+        String closeName = (String) closeData.getOrDefault("name", "<red>Close</red>");
+        @SuppressWarnings("unchecked")
+        List<String> closeLoreLines = (List<String>) closeData.getOrDefault("lore", new ArrayList<>());
+        int closeCustomModelData = (int) closeData.getOrDefault("custom-model-data", 0);
+        
+        InventoryUtils.ItemBuilder closeBuilder = InventoryUtils.builder(closeMaterial)
+                .displayNameMini(closeName);
+        
+        List<Component> closeLore = new ArrayList<>();
+        for (String line : closeLoreLines) {
+            closeLore.add(TextUtils.parseAuto(line));
         }
-        gui.setItem(49, closeButton);
+        closeBuilder.lore(closeLore);
+        
+        if (closeCustomModelData > 0) {
+            closeBuilder.customModelData(closeCustomModelData);
+        }
+        
+        gui.setItem(closeSlot, closeBuilder.build());
     }
 
     /**
-     * Handle GUI click events
+     * Handle GUI click events with config slots and sounds
      */
     public boolean handleClick(int slot, ItemStack clickedItem) {
         if (clickedItem == null || clickedItem.getType() == Material.AIR) {
             return false;
         }
 
-        if (slot == 45) {
-            // Back button
+        // Get navigation slots from config
+        int backSlot = config.getNavigationSlot("back");
+        int closeSlot = config.getNavigationSlot("close");
+
+        if (slot == backSlot) {
+            // Back button - return to recipe book
+            player.playSound(player.getLocation(), config.getBackSound(), 1.0f, 1.0f);
             parentGUI.open();
             return true;
         }
 
-        if (slot == 49) {
+        if (slot == closeSlot) {
             // Close button
+            player.playSound(player.getLocation(), config.getCloseSound(), 1.0f, 1.0f);
             player.closeInventory();
             return true;
         }

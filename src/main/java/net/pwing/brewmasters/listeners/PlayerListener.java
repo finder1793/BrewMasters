@@ -1,6 +1,7 @@
 package net.pwing.brewmasters.listeners;
 
 import net.pwing.brewmasters.BrewMasters;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -19,8 +20,11 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        // Load player data when they join
-        plugin.getPlayerDataManager().getPlayerData(event.getPlayer());
+        Player player = event.getPlayer();
+        plugin.getPlayerDataManager().getPlayerData(player).updateLastSeen();
+        
+        // Handle any expired potion effects that occurred while player was offline
+        plugin.getPotionEffectManager().onPlayerLogin(player);
     }
 
     @EventHandler

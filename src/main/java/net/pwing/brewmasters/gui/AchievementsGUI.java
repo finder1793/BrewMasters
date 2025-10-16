@@ -1,38 +1,74 @@
 package net.pwing.brewmasters.gui;
 
+import net.kyori.adventure.text.Component;
 import net.pwing.brewmasters.BrewMasters;
+import net.pwing.brewmasters.gui.config.AchievementsGUIConfig;
 import net.pwing.brewmasters.models.Achievement;
-import org.bukkit.Bukkit;
+import net.pwing.brewmasters.models.Achievement.AchievementType;
+import net.pwing.brewmasters.utils.InventoryUtils;
+import net.pwing.brewmasters.utils.TextUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * GUI for displaying achievements to players
+ * Fully configurable with MiniMessage support and visibility filtering
  */
+@SuppressWarnings("deprecation")
 public class AchievementsGUI {
 
     private final BrewMasters plugin;
     private final Player player;
-    private final List<Achievement> achievements;
+    private final AchievementsGUIConfig config;
+    private final List<Achievement> visibleAchievements;
     private final Set<String> unlockedAchievements;
     private int currentPage;
-    private final int achievementsPerPage = 28; // 7x4 grid with navigation
+    private final Map<AchievementType, String> formattedTypeCache = new HashMap<>();
 
     public AchievementsGUI(BrewMasters plugin, Player player) {
         this.plugin = plugin;
         this.player = player;
-        this.achievements = new ArrayList<>(plugin.getAchievementManager().getAllAchievements());
+        this.config = plugin.getGUIConfigManager().getAchievementsConfig();
         this.unlockedAchievements = plugin.getAchievementManager().getUnlockedAchievements(player);
+        this.visibleAchievements = new ArrayList<>();
         this.currentPage = 0;
         
-        // Sort achievements: unlocked first, then by type
-        achievements.sort((a1, a2) -> {
+        loadAchievements();
+    }
+    
+    /**
+     * Load and filter achievements based on visibility settings
+     */
+    private void loadAchievements() {
+        List<Achievement> allAchievements = new ArrayList<>(plugin.getAchievementManager().getAllAchievements());
+        
+        for (Achievement achievement : allAchievements) {
+            // Check visibility settings
+            boolean isUnlocked = unlockedAchievements.contains(achievement.getId());
+            
+            // Hide locked achievements if configured
+            if (!isUnlocked && config.shouldHideLocked()) {
+                continue;
+            }
+            
+            // Hide secret achievements if configured and not unlocked
+            if (achievement.isHidden() && !isUnlocked && config.shouldHideSecret()) {
+                continue;
+            }
+            
+            visibleAchievements.add(achievement);
+        }
+        
+        // Sort achievements: unlocked first, then by type, then by name
+        visibleAchievements.sort((a1, a2) -> {
             boolean unlocked1 = unlockedAchievements.contains(a1.getId());
             boolean unlocked2 = unlockedAchievements.contains(a2.getId());
             
@@ -57,26 +93,36 @@ public class AchievementsGUI {
     public void open() {
         Inventory gui = createGUI();
         player.openInventory(gui);
+        
+        // Play open sound
+        player.playSound(player.getLocation(), config.getOpenSound(), 1.0f, 1.0f);
     }
 
     /**
-     * Create the GUI inventory
+     * Create the GUI inventory with config-based approach
      */
     private Inventory createGUI() {
-        int totalPages = (int) Math.ceil((double) achievements.size() / achievementsPerPage);
-        String title = ChatColor.GOLD + "Achievements " + ChatColor.GRAY + "(" + (currentPage + 1) + "/" + Math.max(1, totalPages) + ")";
+        // Calculate pagination
+        int itemsPerPage = config.getItemsPerPage();
+        int totalPages = (int) Math.ceil((double) visibleAchievements.size() / itemsPerPage);
+        if (totalPages == 0) totalPages = 1;
         
-        Inventory gui = Bukkit.createInventory(null, 54, title);
+        // Create title with placeholders
+        String titleText = config.getTitle()
+                .replace("{current_page}", String.valueOf(currentPage + 1))
+                .replace("{total_pages}", String.valueOf(totalPages));
+        Component titleComponent = TextUtils.parseAuto(titleText);
+        
+        // Create inventory with configured size
+        Inventory gui = InventoryUtils.createInventory(config.getSize(), titleComponent);
+        
+        // Add filler items if enabled
+        if (config.isFillerEnabled()) {
+            addFillerItems(gui);
+        }
 
         // Add achievements for current page
-        int startIndex = currentPage * achievementsPerPage;
-        int endIndex = Math.min(startIndex + achievementsPerPage, achievements.size());
-
-        for (int i = startIndex; i < endIndex; i++) {
-            Achievement achievement = achievements.get(i);
-            ItemStack achievementItem = createAchievementItem(achievement);
-            gui.setItem(i - startIndex, achievementItem);
-        }
+        populateAchievements(gui);
 
         // Add navigation items
         addNavigationItems(gui, totalPages);
@@ -86,221 +132,367 @@ public class AchievementsGUI {
 
         return gui;
     }
+    
+    /**
+     * Add filler items to empty slots
+     */
+    private void addFillerItems(Inventory gui) {
+        Material fillerMaterial = config.getFillerMaterial();
+        String fillerName = config.getFillerName();
+        int customModelData = config.getFillerCustomModelData();
+        
+        ItemStack filler = InventoryUtils.builder(fillerMaterial)
+                .displayNameMini(fillerName)
+                .customModelData(customModelData > 0 ? customModelData : 0)
+                .build();
+        
+        // Fill all slots initially
+        for (int i = 0; i < gui.getSize(); i++) {
+            gui.setItem(i, filler);
+        }
+    }
+    
+    /**
+     * Populate the GUI with achievement items based on current page
+     */
+    private void populateAchievements(Inventory gui) {
+        int itemsPerPage = config.getItemsPerPage();
+        int startIndex = currentPage * itemsPerPage;
+        int endIndex = Math.min(startIndex + itemsPerPage, visibleAchievements.size());
+        
+        // Add visible achievements for this page
+        int slot = 0;
+        for (int i = startIndex; i < endIndex; i++) {
+            Achievement achievement = visibleAchievements.get(i);
+            ItemStack achievementItem = createAchievementItem(achievement);
+            gui.setItem(slot, achievementItem);
+            slot++;
+        }
+    }
 
     /**
-     * Create an item representing an achievement
+     * Create an item representing an achievement with proper state handling
      */
     private ItemStack createAchievementItem(Achievement achievement) {
         boolean isUnlocked = unlockedAchievements.contains(achievement.getId());
+        boolean isHidden = achievement.isHidden();
         
-        // Use achievement icon or default based on unlock status
-        Material iconMaterial = isUnlocked ? achievement.getIcon() : Material.GRAY_DYE;
-        ItemStack item = new ItemStack(iconMaterial);
-        ItemMeta meta = item.getItemMeta();
+        // Determine achievement state and create appropriate item
+        if (isUnlocked) {
+            return createUnlockedAchievementItem(achievement);
+        } else if (isHidden) {
+            return createHiddenAchievementItem(achievement);
+        } else {
+            return createLockedAchievementItem(achievement);
+        }
+    }
+    
+    /**
+     * Create item for an unlocked achievement
+     */
+    private ItemStack createUnlockedAchievementItem(Achievement achievement) {
+        // Unlocked achievements use the achievement's icon
+        Material material = achievement.getIcon();
+        String name = config.getUnlockedName();
+        List<String> loreLines = config.getUnlockedLore();
+        int customModelData = config.getUnlockedCustomModelData();
         
-        if (meta != null) {
-            // Set name with unlock status
-            String nameColor = isUnlocked ? ChatColor.GOLD.toString() : ChatColor.GRAY.toString();
-            String unlockIndicator = isUnlocked ? "🏆 " : "🔒 ";
-            meta.setDisplayName(nameColor + unlockIndicator + ChatColor.stripColor(achievement.getName()));
-            
-            List<String> lore = new ArrayList<>();
-            
-            // Description
-            lore.add(ChatColor.GRAY + achievement.getDescription());
-            lore.add("");
-            
-            // Progress information
-            if (isUnlocked) {
-                lore.add(ChatColor.GREEN + "✓ Unlocked!");
-            } else {
-                // Show progress if applicable
-                int progress = plugin.getAchievementManager().getAchievementProgress(player, achievement);
-                int target = achievement.getTargetValue();
-                
-                if (target > 1) {
-                    lore.add(ChatColor.YELLOW + "Progress: " + progress + "/" + target);
-                    
-                    // Progress bar
-                    int barLength = 20;
-                    int filledBars = Math.min(barLength, (int) ((double) progress / target * barLength));
-                    StringBuilder progressBar = new StringBuilder(ChatColor.GREEN.toString());
-                    
-                    for (int i = 0; i < filledBars; i++) {
-                        progressBar.append("█");
-                    }
-                    progressBar.append(ChatColor.GRAY);
-                    for (int i = filledBars; i < barLength; i++) {
-                        progressBar.append("█");
-                    }
-                    
-                    lore.add(progressBar.toString());
-                } else {
-                    lore.add(ChatColor.RED + "Not unlocked");
-                }
-            }
-            
-            lore.add("");
-            
-            // Achievement type and trigger info
-            lore.add(ChatColor.DARK_GRAY + "Type: " + formatEnumName(achievement.getType().name()));
-            
-            if (!achievement.isHidden() || isUnlocked) {
-                lore.add(ChatColor.DARK_GRAY + "Requirement: " + getRequirementDescription(achievement));
-            }
-            
-            // Reward information
-            if (achievement.getReward() != null && (isUnlocked || !achievement.isHidden())) {
-                lore.add("");
-                lore.add(ChatColor.YELLOW + "Reward:");
-                
-                switch (achievement.getReward().getType()) {
-                    case EXPERIENCE:
-                        lore.add(ChatColor.GREEN + "• " + achievement.getReward().getExperience() + " Experience");
-                        break;
-                    case ITEMS:
-                        lore.add(ChatColor.GREEN + "• " + achievement.getReward().getItems().size() + " Items");
-                        break;
-                    case COMMANDS:
-                        lore.add(ChatColor.GREEN + "• Special Reward");
-                        break;
-                    case COMBINED:
-                        lore.add(ChatColor.GREEN + "• Multiple Rewards");
-                        break;
-                }
-            }
-            
-            meta.setLore(lore);
-            item.setItemMeta(meta);
+        // Build item with config values
+        InventoryUtils.ItemBuilder builder = InventoryUtils.builder(material)
+                .displayNameMini(name
+                        .replace("{achievement_name}", achievement.getName())
+                        .replace("{achievement_type}", formatType(achievement.getType())));
+        
+        // Add lore with placeholders
+        List<Component> lore = new ArrayList<>();
+        for (String line : loreLines) {
+            String processedLine = line
+                    .replace("{achievement_name}", achievement.getName())
+                    .replace("{achievement_description}", achievement.getDescription())
+                    .replace("{achievement_type}", formatType(achievement.getType()))
+                    .replace("{reward}", achievement.getReward() != null ? achievement.getReward().toString() : "None");
+            lore.add(TextUtils.parseAuto(processedLine));
+        }
+        builder.lore(lore);
+        
+        // Add custom model data if set
+        if (customModelData > 0) {
+            builder.customModelData(customModelData);
         }
         
+        ItemStack item = builder.build();
+        return applyGlow(item, config.shouldUnlockedGlow());
+    }
+    
+    /**
+     * Create item for a locked achievement
+     */
+    private ItemStack createLockedAchievementItem(Achievement achievement) {
+        // Locked achievements use a default gray dye icon
+        Material material = Material.GRAY_DYE;
+        String name = config.getLockedName();
+        List<String> loreLines = config.getLockedLore();
+        int customModelData = config.getLockedCustomModelData();
+        
+        // Build item with config values
+        InventoryUtils.ItemBuilder builder = InventoryUtils.builder(material)
+                .displayNameMini(name
+                        .replace("{achievement_name}", achievement.getName())
+                        .replace("{achievement_type}", formatType(achievement.getType())));
+        
+        // Add lore with placeholders
+        List<Component> lore = new ArrayList<>();
+        for (String line : loreLines) {
+            String processedLine = line
+                    .replace("{achievement_name}", achievement.getName())
+                    .replace("{achievement_description}", achievement.getDescription())
+                    .replace("{achievement_type}", formatType(achievement.getType()));
+            lore.add(TextUtils.parseAuto(processedLine));
+        }
+        builder.lore(lore);
+        
+        // Add custom model data if set
+        if (customModelData > 0) {
+            builder.customModelData(customModelData);
+        }
+        
+        ItemStack item = builder.build();
+        return applyGlow(item, config.shouldLockedGlow());
+    }
+    
+    /**
+     * Create item for a hidden achievement
+     */
+    private ItemStack createHiddenAchievementItem(Achievement achievement) {
+        Material material = config.getHiddenMaterial();
+        String name = config.getHiddenName();
+        List<String> loreLines = config.getHiddenLore();
+        int customModelData = config.getHiddenCustomModelData();
+        
+        // Build item with config values
+        InventoryUtils.ItemBuilder builder = InventoryUtils.builder(material)
+                .displayNameMini(name);
+        
+        // Add lore
+        List<Component> lore = new ArrayList<>();
+        for (String line : loreLines) {
+            lore.add(TextUtils.parseAuto(line));
+        }
+        builder.lore(lore);
+        
+        // Add custom model data if set
+        if (customModelData > 0) {
+            builder.customModelData(customModelData);
+        }
+        
+        ItemStack item = builder.build();
+        return applyGlow(item, config.shouldHiddenGlow());
+    }
+    
+    /**
+     * Apply glow effect to an item (Paper 1.20.5+ feature)
+     */
+    private ItemStack applyGlow(ItemStack item, boolean shouldGlow) {
+        if (!shouldGlow) return item;
+        
+        ItemMeta meta = item.getItemMeta();
+        if (meta != null) {
+            try {
+                meta.setEnchantmentGlintOverride(true);
+                item.setItemMeta(meta);
+            } catch (NoSuchMethodError e) {
+                // Method not available in this server version, skip glow
+            }
+        }
         return item;
     }
 
     /**
-     * Get requirement description for an achievement
+     * Format achievement type for display (cached)
      */
-    private String getRequirementDescription(Achievement achievement) {
-        switch (achievement.getTrigger()) {
-            case FIRST_DISCOVERY:
-                return "Discover your first recipe";
-            case FIRST_BREW:
-                return "Brew your first potion";
-            case RECIPES_DISCOVERED:
-                return "Discover " + achievement.getTargetValue() + " recipes";
-            case POTIONS_BREWED:
-                return "Brew " + achievement.getTargetValue() + " potions";
-            case SPECIFIC_RECIPE_BREWED:
-                return "Brew " + achievement.getTargetRecipe() + " " + achievement.getTargetValue() + " times";
-            case RECIPE_SET_DISCOVERED:
-                return "Discover specific recipe set";
-            case MASTER_BREWER:
-                return "Discover all recipes";
-            default:
-                return "Complete special task";
-        }
+    private String formatType(AchievementType type) {
+        return formattedTypeCache.computeIfAbsent(type, t -> {
+            String[] parts = t.name().split("_");
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < parts.length; i++) {
+                if (i > 0) sb.append(' ');
+                String part = parts[i];
+                sb.append(part.charAt(0)).append(part.substring(1).toLowerCase());
+            }
+            return sb.toString();
+        });
     }
 
     /**
-     * Format enum name for display
-     */
-    private String formatEnumName(String enumName) {
-        return Arrays.stream(enumName.split("_"))
-                .map(word -> word.charAt(0) + word.substring(1).toLowerCase())
-                .reduce((a, b) -> a + " " + b)
-                .orElse(enumName);
-    }
-
-    /**
-     * Add navigation items to the GUI
+     * Add navigation items to the GUI using config
      */
     private void addNavigationItems(Inventory gui, int totalPages) {
         // Previous page button
         if (currentPage > 0) {
-            ItemStack prevButton = new ItemStack(Material.ARROW);
-            ItemMeta prevMeta = prevButton.getItemMeta();
-            if (prevMeta != null) {
-                prevMeta.setDisplayName(ChatColor.YELLOW + "Previous Page");
-                prevMeta.setLore(Arrays.asList(ChatColor.GRAY + "Go to page " + currentPage));
-                prevButton.setItemMeta(prevMeta);
+            Map<String, Object> prevData = config.getNavigationItem("previous-page");
+            if ((boolean) prevData.getOrDefault("enabled", true)) {
+                int slot = (int) prevData.getOrDefault("slot", 45);
+                Material material = Material.valueOf((String) prevData.getOrDefault("material", "ARROW"));
+                String name = ((String) prevData.getOrDefault("name", "<yellow>Previous Page</yellow>"))
+                        .replace("{page}", String.valueOf(currentPage));
+                @SuppressWarnings("unchecked")
+                List<String> loreLines = (List<String>) prevData.getOrDefault("lore", new ArrayList<>());
+                int customModelData = (int) prevData.getOrDefault("custom-model-data", 0);
+                
+                InventoryUtils.ItemBuilder builder = InventoryUtils.builder(material)
+                        .displayNameMini(name);
+                
+                List<Component> lore = new ArrayList<>();
+                for (String line : loreLines) {
+                    lore.add(TextUtils.parseAuto(line.replace("{page}", String.valueOf(currentPage))));
+                }
+                builder.lore(lore);
+                
+                if (customModelData > 0) {
+                    builder.customModelData(customModelData);
+                }
+                
+                gui.setItem(slot, builder.build());
             }
-            gui.setItem(45, prevButton);
         }
 
         // Next page button
         if (currentPage < totalPages - 1) {
-            ItemStack nextButton = new ItemStack(Material.ARROW);
-            ItemMeta nextMeta = nextButton.getItemMeta();
-            if (nextMeta != null) {
-                nextMeta.setDisplayName(ChatColor.YELLOW + "Next Page");
-                nextMeta.setLore(Arrays.asList(ChatColor.GRAY + "Go to page " + (currentPage + 2)));
-                nextButton.setItemMeta(nextMeta);
+            Map<String, Object> nextData = config.getNavigationItem("next-page");
+            if ((boolean) nextData.getOrDefault("enabled", true)) {
+                int slot = (int) nextData.getOrDefault("slot", 53);
+                Material material = Material.valueOf((String) nextData.getOrDefault("material", "ARROW"));
+                String name = ((String) nextData.getOrDefault("name", "<yellow>Next Page</yellow>"))
+                        .replace("{page}", String.valueOf(currentPage + 2));
+                @SuppressWarnings("unchecked")
+                List<String> loreLines = (List<String>) nextData.getOrDefault("lore", new ArrayList<>());
+                int customModelData = (int) nextData.getOrDefault("custom-model-data", 0);
+                
+                InventoryUtils.ItemBuilder builder = InventoryUtils.builder(material)
+                        .displayNameMini(name);
+                
+                List<Component> lore = new ArrayList<>();
+                for (String line : loreLines) {
+                    lore.add(TextUtils.parseAuto(line.replace("{page}", String.valueOf(currentPage + 2))));
+                }
+                builder.lore(lore);
+                
+                if (customModelData > 0) {
+                    builder.customModelData(customModelData);
+                }
+                
+                gui.setItem(slot, builder.build());
             }
-            gui.setItem(53, nextButton);
         }
 
         // Close button
-        ItemStack closeButton = new ItemStack(Material.BARRIER);
-        ItemMeta closeMeta = closeButton.getItemMeta();
-        if (closeMeta != null) {
-            closeMeta.setDisplayName(ChatColor.RED + "Close");
-            closeMeta.setLore(Arrays.asList(ChatColor.GRAY + "Close achievements"));
-            closeButton.setItemMeta(closeMeta);
+        Map<String, Object> closeData = config.getNavigationItem("close");
+        if ((boolean) closeData.getOrDefault("enabled", true)) {
+            int slot = (int) closeData.getOrDefault("slot", 49);
+            Material material = Material.valueOf((String) closeData.getOrDefault("material", "BARRIER"));
+            String name = (String) closeData.getOrDefault("name", "<red>Close</red>");
+            @SuppressWarnings("unchecked")
+            List<String> loreLines = (List<String>) closeData.getOrDefault("lore", new ArrayList<>());
+            int customModelData = (int) closeData.getOrDefault("custom-model-data", 0);
+            
+            InventoryUtils.ItemBuilder builder = InventoryUtils.builder(material)
+                    .displayNameMini(name);
+            
+            List<Component> lore = new ArrayList<>();
+            for (String line : loreLines) {
+                lore.add(TextUtils.parseAuto(line));
+            }
+            builder.lore(lore);
+            
+            if (customModelData > 0) {
+                builder.customModelData(customModelData);
+            }
+            
+            gui.setItem(slot, builder.build());
         }
-        gui.setItem(49, closeButton);
     }
 
     /**
      * Add info item to the GUI
      */
     private void addInfoItem(Inventory gui) {
-        ItemStack infoItem = new ItemStack(Material.NETHER_STAR);
-        ItemMeta infoMeta = infoItem.getItemMeta();
-        if (infoMeta != null) {
-            infoMeta.setDisplayName(ChatColor.GOLD + "Achievement Progress");
-            
-            List<String> lore = new ArrayList<>();
-            lore.add(ChatColor.GRAY + "Unlocked: " + ChatColor.YELLOW + unlockedAchievements.size());
-            lore.add(ChatColor.GRAY + "Total: " + ChatColor.YELLOW + achievements.size());
-            
-            double percentage = achievements.isEmpty() ? 0 : 
-                (double) unlockedAchievements.size() / achievements.size() * 100;
-            lore.add(ChatColor.GRAY + "Completion: " + ChatColor.YELLOW + String.format("%.1f%%", percentage));
-            
-            lore.add("");
-            lore.add(ChatColor.GRAY + "Keep brewing to unlock more!");
-            
-            infoMeta.setLore(lore);
-            infoItem.setItemMeta(infoMeta);
+        // Get info item config
+        Map<String, Object> infoData = config.getNavigationItem("info");
+        if (!(boolean) infoData.getOrDefault("enabled", true)) {
+            return; // Info item disabled
         }
-        gui.setItem(4, infoItem);
+        
+        int slot = (int) infoData.getOrDefault("slot", 4);
+        Material material = Material.valueOf((String) infoData.getOrDefault("material", "NETHER_STAR"));
+        String name = (String) infoData.getOrDefault("name", "<gold>Achievement Progress</gold>");
+        @SuppressWarnings("unchecked")
+        List<String> loreLines = (List<String>) infoData.getOrDefault("lore", new ArrayList<>());
+        int customModelData = (int) infoData.getOrDefault("custom-model-data", 0);
+        
+        // Calculate statistics
+        int totalAchievements = plugin.getAchievementManager().getAllAchievements().size();
+        int unlockedCount = unlockedAchievements.size();
+        int visibleCount = visibleAchievements.size();
+        double percentage = totalAchievements > 0 ? (double) unlockedCount / totalAchievements * 100 : 0;
+        
+        // Build item with placeholders
+        InventoryUtils.ItemBuilder builder = InventoryUtils.builder(material)
+                .displayNameMini(name);
+        
+        List<Component> lore = new ArrayList<>();
+        for (String line : loreLines) {
+            String processedLine = line
+                    .replace("{unlocked}", String.valueOf(unlockedCount))
+                    .replace("{total}", String.valueOf(totalAchievements))
+                    .replace("{visible}", String.valueOf(visibleCount))
+                    .replace("{percentage}", String.format("%.1f", percentage));
+            lore.add(TextUtils.parseAuto(processedLine));
+        }
+        builder.lore(lore);
+        
+        if (customModelData > 0) {
+            builder.customModelData(customModelData);
+        }
+        
+        gui.setItem(slot, builder.build());
     }
 
     /**
-     * Handle GUI click events
+     * Handle GUI click events with config-based slots and sounds
      */
     public boolean handleClick(int slot, ItemStack clickedItem) {
         if (clickedItem == null || clickedItem.getType() == Material.AIR) {
             return false;
         }
 
-        // Handle navigation
-        if (slot == 45 && currentPage > 0) {
-            // Previous page
+        int itemsPerPage = config.getItemsPerPage();
+        int totalPages = (int) Math.ceil((double) visibleAchievements.size() / itemsPerPage);
+        if (totalPages == 0) totalPages = 1;
+        
+        // Get navigation slots from config
+        int prevSlot = config.getNavigationSlot("previous-page");
+        int nextSlot = config.getNavigationSlot("next-page");
+        int closeSlot = config.getNavigationSlot("close");
+        
+        // Handle previous page
+        if (slot == prevSlot && currentPage > 0) {
             currentPage--;
+            player.playSound(player.getLocation(), config.getPageTurnSound(), 1.0f, 1.0f);
             open();
             return true;
         }
 
-        if (slot == 53 && currentPage < Math.ceil((double) achievements.size() / achievementsPerPage) - 1) {
-            // Next page
+        // Handle next page
+        if (slot == nextSlot && currentPage < totalPages - 1) {
             currentPage++;
+            player.playSound(player.getLocation(), config.getPageTurnSound(), 1.0f, 1.0f);
             open();
             return true;
         }
 
-        if (slot == 49) {
-            // Close button
+        // Handle close button
+        if (slot == closeSlot) {
+            player.playSound(player.getLocation(), config.getCloseSound(), 1.0f, 1.0f);
             player.closeInventory();
             return true;
         }

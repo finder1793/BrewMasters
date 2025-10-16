@@ -139,10 +139,14 @@ public class AchievementReward {
             ItemMeta meta = item.getItemMeta();
             if (meta != null) {
                 if (section.contains("name")) {
-                    meta.setDisplayName(section.getString("name"));
+                    meta.displayName(net.pwing.brewmasters.utils.TextUtils.parseAuto(section.getString("name")));
                 }
                 if (section.contains("lore")) {
-                    meta.setLore(section.getStringList("lore"));
+                    List<net.kyori.adventure.text.Component> loreComponents = new ArrayList<>();
+                    for (String line : section.getStringList("lore")) {
+                        loreComponents.add(net.pwing.brewmasters.utils.TextUtils.parseAuto(line));
+                    }
+                    meta.lore(loreComponents);
                 }
                 item.setItemMeta(meta);
             }

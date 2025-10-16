@@ -2,22 +2,17 @@ package net.pwing.brewmasters.listeners;
 
 import net.pwing.brewmasters.BrewMasters;
 import net.pwing.brewmasters.models.BrewingRecipe;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BrewingStand;
-import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.BrewEvent;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.block.Action;
 import org.bukkit.inventory.BrewerInventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -71,7 +66,7 @@ public class BrewingListener implements Listener {
                 if (!recipe.checkConditions(brewer, location)) {
                     // Conditions not met - cancel this slot's brewing
                     if (brewer != null) {
-                        brewer.sendMessage("§cConditions not met for brewing this recipe!");
+                        brewer.sendMessage(Component.text("Conditions not met for brewing this recipe!", NamedTextColor.RED));
                     }
                     continue;
                 }
@@ -113,16 +108,18 @@ public class BrewingListener implements Listener {
 
     /**
      * Find a player near the brewing stand (within 5 blocks)
+     * Optimized to avoid stream allocation overhead
      * 
      * @param location The brewing stand location
      * @return The nearest player, or null if none found
      */
     private Player findNearbyPlayer(Location location) {
-        return location.getWorld().getNearbyEntities(location, 5, 5, 5).stream()
-                .filter(entity -> entity instanceof Player)
-                .map(entity -> (Player) entity)
-                .findFirst()
-                .orElse(null);
+        for (var entity : location.getWorld().getNearbyEntities(location, 5, 5, 5)) {
+            if (entity instanceof Player) {
+                return (Player) entity;
+            }
+        }
+        return null;
     }
 
     private boolean isPotion(Material material) {

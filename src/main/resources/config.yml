@@ -1,5 +1,10 @@
 # BrewMasters Configuration
 # Custom brewing recipes for your server
+# Now supports MiniMessage format with RGB colors, gradients, and more!
+# Format examples:
+#   Legacy: "&aGreen text" or "&c&lBold red"
+#   MiniMessage: "<green>Green text" or "<gradient:red:blue>Gradient</gradient>"
+#   Hex colors: "<#FF5555>Custom color" or "<color:#00AAFF>Another way"
 
 # Discovery System Configuration
 discovery:
@@ -34,7 +39,7 @@ achievements:
   list:
     # First discovery achievement
     first_discovery:
-      name: "&6First Discovery"
+      name: "<gradient:gold:yellow>First Discovery</gradient>"
       description: "Discover your first recipe"
       type: DISCOVERY
       trigger: FIRST_DISCOVERY
@@ -42,11 +47,11 @@ achievements:
       reward:
         type: EXPERIENCE
         experience: 100
-        message: "&aYou gained 100 experience for your first discovery!"
+        message: "<gradient:green:lime>✨ You gained 100 experience for your first discovery!</gradient>"
 
     # First brew achievement
     first_brew:
-      name: "&bFirst Brew"
+      name: "<gradient:aqua:blue>First Brew</gradient>"
       description: "Brew your first custom potion"
       type: BREWING
       trigger: FIRST_BREW
@@ -56,14 +61,14 @@ achievements:
         items:
           - material: EXPERIENCE_BOTTLE
             amount: 3
-            name: "&eBonus Experience"
+            name: "<gradient:yellow:gold>Bonus Experience</gradient>"
             lore:
-              - "&7Reward for first brew"
-        message: "&aYou received bonus experience bottles!"
+              - "<gray>Reward for first brew"
+        message: "<green>✨ You received bonus experience bottles!"
 
     # Recipe collector achievements
     recipe_collector_5:
-      name: "&eRecipe Collector"
+      name: "<gradient:yellow:gold>📚 Recipe Collector</gradient>"
       description: "Discover 5 recipes"
       type: DISCOVERY
       trigger: RECIPES_DISCOVERED
@@ -74,7 +79,7 @@ achievements:
         experience: 250
 
     recipe_collector_10:
-      name: "&6Recipe Expert"
+      name: "<gradient:gold:yellow>📖 Recipe Expert</gradient>"
       description: "Discover 10 recipes"
       type: DISCOVERY
       trigger: RECIPES_DISCOVERED
@@ -86,7 +91,7 @@ achievements:
 
     # Master brewer achievement
     master_brewer:
-      name: "&5Master Brewer"
+      name: "<rainbow>🏆 Master Brewer</rainbow>"
       description: "Discover all available recipes"
       type: DISCOVERY
       trigger: MASTER_BREWER
@@ -96,15 +101,15 @@ achievements:
         items:
           - material: DIAMOND
             amount: 5
-            name: "&bMaster's Reward"
+            name: "<gradient:aqua:blue>💎 Master's Reward</gradient>"
         experience: 1000
         commands:
-          - "broadcast &6{player} &ehas become a Master Brewer!"
-        message: "&6Congratulations! You are now a Master Brewer!"
+          - "broadcast <gradient:gold:yellow>{player}</gradient> <yellow>has become a</yellow> <rainbow>Master Brewer!</rainbow>"
+        message: "<gradient:gold:yellow>🎉 Congratulations! You are now a Master Brewer!</gradient>"
 
     # Brewing milestones
     brewing_apprentice:
-      name: "&aBrewing Apprentice"
+      name: "<gradient:green:lime>✨ Brewing Apprentice</gradient>"
       description: "Brew 25 potions"
       type: BREWING
       trigger: POTIONS_BREWED
@@ -115,7 +120,7 @@ achievements:
         experience: 300
 
     brewing_journeyman:
-      name: "&9Brewing Journeyman"
+      name: "<gradient:blue:aqua>⚒️ Brewing Journeyman</gradient>"
       description: "Brew 100 potions"
       type: BREWING
       trigger: POTIONS_BREWED
@@ -127,7 +132,7 @@ achievements:
 
     # Chain-related achievements
     first_chain:
-      name: "&eFirst Chain"
+      name: "<gradient:yellow:gold>⛓️ First Chain</gradient>"
       description: "Complete your first brewing chain"
       type: SPECIAL
       trigger: FIRST_CHAIN
@@ -137,7 +142,7 @@ achievements:
         experience: 200
 
     chain_master:
-      name: "&6Chain Master"
+      name: "<rainbow>⭐ Chain Master</rainbow>"
       description: "Complete 5 brewing chains"
       type: SPECIAL
       trigger: CHAINS_COMPLETED
@@ -148,7 +153,7 @@ achievements:
         experience: 500
         commands:
           - "give {player} minecraft:experience_bottle 10"
-        message: "&6You are a true Chain Master!"
+        message: "<gradient:gold:yellow>🎉 You are a true Chain Master!</gradient>"
 
 # Brewing Speed System Configuration
 brewing-speeds:
@@ -209,10 +214,10 @@ recipes:
     ingredient: MAGMA_CREAM
     brew-time: 400
     result:
-      name: "&6Potion of Fire Resistance"
+      name: "<gradient:gold:orange>🔥 Potion of Fire Resistance</gradient>"
       lore:
-        - "&7Grants immunity to fire"
-        - "&7and lava for 3 minutes"
+        - "<gray>Grants immunity to fire"
+        - "<gray>and lava for 3 minutes"
       color: "#FF8C00"
       effects:
         - type: FIRE_RESISTANCE
@@ -225,9 +230,10 @@ recipes:
     ingredient: SUGAR
     brew-time: 400
     result:
-      name: "&bPotion of Swiftness"
+      name: "<gradient:aqua:blue>⚡ Potion of Swiftness</gradient>"
       lore:
-        - "&7Increases movement speed"
+        - "<gray>Increases movement speed"
+        - "<aqua>Duration: <white>90 seconds"
       color: "#7CAFC2"
       effects:
         - type: SPEED
@@ -240,9 +246,10 @@ recipes:
     ingredient: GLISTERING_MELON_SLICE
     brew-time: 400
     result:
-      name: "&cPotion of Healing"
+      name: "<gradient:red:light_purple>❤ Potion of Healing</gradient>"
       lore:
-        - "&7Restores health instantly"
+        - "<gray>Restores health instantly"
+        - "<red>+<white>4 hearts"
       color: "#F82423"
       effects:
         - type: HEAL
@@ -255,9 +262,10 @@ recipes:
     ingredient: GOLDEN_CARROT
     brew-time: 400
     result:
-      name: "&9Potion of Night Vision"
+      name: "<gradient:blue:aqua>👁 Potion of Night Vision</gradient>"
       lore:
-        - "&7See clearly in the dark"
+        - "<gray>See clearly in the dark"
+        - "<aqua>Duration: <white>3 minutes"
       color: "#1F1FA1"
       effects:
         - type: NIGHT_VISION
@@ -270,11 +278,12 @@ recipes:
     ingredient: DRAGON_BREATH
     brew-time: 600
     result:
-      name: "&5&lAlchemist's Elixir"
+      name: "<gradient:dark_purple:light_purple><bold>⚗ Alchemist's Elixir</bold></gradient>"
       lore:
-        - "&7A powerful concoction"
-        - "&7granting multiple effects"
-        - "&8Legendary"
+        - "<gray>A powerful concoction"
+        - "<gray>granting multiple effects"
+        - ""
+        - "<gradient:gold:yellow>Legendary</gradient>"
       color: "#9B30FF"
       effects:
         - type: REGENERATION
@@ -308,11 +317,12 @@ recipes:
     ingredient: SOUL_SAND
     brew-time: 500
     result:
-      name: "&8&lPotion of Withering"
+      name: "<gradient:dark_gray:black><bold>💀 Potion of Withering</bold></gradient>"
       lore:
-        - "&7Harness the power of souls"
-        - "&7to inflict withering damage"
-        - "&8Rare"
+        - "<gray>Harness the power of souls"
+        - "<gray>to inflict withering damage"
+        - ""
+        - "<dark_gray>Rare</dark_gray>"
       color: "#2C1810"
       glowing: true
       effects:
@@ -383,11 +393,12 @@ recipes:
     ingredient: ENDER_PEARL
     brew-time: 800
     result:
-      name: "&5&lPotion of Ender Shift"
+      name: "<gradient:dark_purple:aqua><bold>🌀 Potion of Ender Shift</bold></gradient>"
       lore:
-        - "&7Grants temporary teleportation"
-        - "&7and dimensional powers"
-        - "&5&lEpic"
+        - "<gray>Grants temporary teleportation"
+        - "<gray>and dimensional powers"
+        - ""
+        - "<gradient:dark_purple:light_purple><bold>Epic</bold></gradient>"
       color: "#48D1CC"
       glowing: true
       effects:
@@ -407,11 +418,12 @@ recipes:
     ingredient: NETHERITE_SCRAP
     brew-time: 1200
     result:
-      name: "&4&lNetherite Fortification"
+      name: "<rainbow><bold>🛡 Netherite Fortification</bold></rainbow>"
       lore:
-        - "&7The ultimate defensive potion"
-        - "&7forged from ancient debris"
-        - "&6&lLegendary"
+        - "<gray>The ultimate defensive potion"
+        - "<gray>forged from ancient debris"
+        - ""
+        - "<gradient:gold:yellow><bold>⭐ Legendary ⭐</bold></gradient>"
       color: "#654321"
       glowing: true
       custom-model-data: 1

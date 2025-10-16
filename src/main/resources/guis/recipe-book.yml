@@ -1,0 +1,232 @@
+# Recipe Book GUI Configuration
+# Supports MiniMessage format, custom model data, permissions, and conditions!
+
+# GUI Settings
+gui:
+  title: "<gradient:aqua:blue>📖 Recipe Book</gradient>"
+  size: 54
+  items-per-page: 28  # Default items per page (if not using per-page-limits)
+
+# Background filler
+filler:
+  enabled: true
+  material: GRAY_STAINED_GLASS_PANE
+  name: " "
+  custom-model-data: 0
+
+# Discovered recipe display
+discovered-recipe:
+  name: "<gradient:green:lime>{recipe_name}</gradient>"
+  lore:
+    - "<gray>Click to view recipe details"
+    - ""
+    - "<aqua>Brewing Time: <white>{brew_time}s"
+    - "<gold>Type: <yellow>{potion_type}"
+    - ""
+    - "<green>✓ Discovered"
+  glow: true
+
+# Locked/undiscovered recipe
+locked-recipe:
+  material: BARRIER
+  name: "<dark_gray>??? Locked Recipe"
+  lore:
+    - "<gray>You haven't discovered this recipe yet"
+    - ""
+    - "<#FFD700>Explore and brew to discover!"
+  custom-model-data: 0
+  glow: false
+
+# Permission-locked recipe (has permission but not discovered)
+permission-locked-recipe:
+  material: IRON_BARS
+  name: "<red>🔒 Permission Required"
+  lore:
+    - "<gray>This recipe requires special permission"
+    - ""
+    - "<red>Permission: <white>{permission}"
+  custom-model-data: 0
+  glow: false
+
+# Condition-locked recipe (doesn't meet conditions)
+condition-locked-recipe:
+  material: REDSTONE
+  name: "<red>⚠ Conditions Not Met"
+  lore:
+    - "<gray>This recipe has special requirements"
+    - ""
+    - "<red>Requirements:"
+    - "{condition_list}"
+  custom-model-data: 0
+  glow: false
+
+# Recipe visibility settings
+visibility:
+  # Hide recipes the player hasn't discovered
+  hide-undiscovered: false
+  
+  # Hide recipes the player doesn't have permission for
+  hide-no-permission: false
+  
+  # Hide recipes where conditions aren't met
+  hide-unmet-conditions: false
+  
+  # Show locked recipes as placeholders
+  show-locked-placeholders: true
+
+# Navigation
+navigation:
+  previous-page:
+    slot: 45
+    material: ARROW
+    name: "<yellow>← Previous Page"
+    lore:
+      - "<gray>Go to page {previous_page}"
+    custom-model-data: 0
+  
+  next-page:
+    slot: 53
+    material: ARROW
+    name: "<yellow>Next Page →"
+    lore:
+      - "<gray>Go to page {next_page}"
+    custom-model-data: 0
+  
+  current-page:
+    slot: 49
+    material: BOOK
+    name: "<gradient:gold:yellow>Page {current_page}/{total_pages}</gradient>"
+    lore:
+      - "<gray>Discovered: <white>{discovered_count}<gray>/<white>{total_count}"
+      - ""
+      - "<aqua>{percentage}%<gray> Complete"
+    custom-model-data: 0
+  
+  close:
+    slot: 50
+    material: BARRIER
+    name: "<red>Close"
+    lore:
+      - "<gray>Close the recipe book"
+    custom-model-data: 0
+  
+  achievements:
+    enabled: true
+    slot: 48
+    material: NETHER_STAR
+    name: "<gradient:gold:yellow>🏆 Achievements</gradient>"
+    lore:
+      - "<gray>View your brewing achievements"
+      - ""
+      - "<green>Click to open!"
+    custom-model-data: 0
+    permission: "brewmasters.gui.achievements"  # Optional permission
+
+# Sounds
+sounds:
+  open: BLOCK_CHEST_OPEN
+  close: BLOCK_CHEST_CLOSE
+  click: UI_BUTTON_CLICK
+  page-turn: ITEM_BOOK_PAGE_TURN
+  locked: ENTITY_VILLAGER_NO
+
+# Page permissions (optional - lock entire pages behind permissions)
+page-permissions:
+  enabled: false
+  # Example: page 2 requires this permission
+  # "2": "brewmasters.recipes.page2"
+  # "3": "brewmasters.recipes.page3"
+
+# Per-page item limits (optional - set different limits for each page)
+# Useful for creating featured pages or special layouts
+per-page-limits:
+  enabled: false
+  
+  # Format: page_number: max_items
+  # Examples:
+  # "1": 20    # Page 1 shows 20 recipes
+  # "2": 15    # Page 2 shows 15 recipes
+  # "3": 10    # Page 3 shows 10 recipes (for legendary/rare recipes)
+  
+  # Use case: Featured page with fewer items
+  # "1": 12    # Featured/starter recipes
+  # "2": 28    # Normal page
+  # "3": 28    # Normal page
+
+# Recipe page assignments (optional - assign specific recipes to specific pages)
+# If enabled, recipes will be placed on their assigned pages instead of auto-filling
+# Recipes without assignments will auto-fill remaining slots
+recipe-page-assignments:
+  enabled: false
+  
+  # Format: recipe_id: page_number
+  # Real examples from your config.yml:
+  
+  # Basic/starter recipes on page 1
+  # "fire_resistance": 1
+  # "super_speed": 1
+  # "instant_health": 1
+  # "night_vision": 1
+  # "invisibility": 1
+  
+  # Advanced/multi-effect recipes on page 2
+  # "alchemist_brew": 2
+  # "soul_wither": 2
+  # "soul_speed": 2
+  # "ender_shift": 2
+  # "splash_healing": 2
+  # "lingering_strength": 2
+  
+  # Legendary/rare recipes on page 3
+  # "netherite_defense": 3
+  # "echo_resonance": 3
+  # "amethyst_clarity": 3
+  
+  # Conditional recipes on page 4 (with permissions)
+  # "nether_essence": 4
+  # "deep_dark_brew": 4
+  # "moonlight_elixir": 4
+  # "storm_brew": 4
+  # "desert_mirage": 4
+  # "master_alchemist_brew": 4
+  # "veteran_potion": 4
+
+# Recipe slot assignments (optional - assign recipes to specific slots)
+# Allows complete control over recipe positioning
+# Slots are 0-53 for a 54-slot inventory
+# Typical recipe area: slots 0-27 (avoid navigation slots 45-53)
+recipe-slot-assignments:
+  enabled: false
+  
+  # Format: recipe_id: slot_number
+  # Real examples from your config.yml:
+  
+  # Create a featured layout with legendary in center:
+  # "netherite_defense": 13     # Center (featured legendary)
+  # "echo_resonance": 12        # Left of center
+  # "amethyst_clarity": 14      # Right of center
+  # "ender_shift": 4            # Top row center
+  # "alchemist_brew": 22        # Bottom row center
+  
+  # Organize by element/theme:
+  # Row 1 (slots 0-8): Fire/heat potions
+  # "fire_resistance": 0
+  # "soul_wither": 1
+  # "nether_essence": 2
+  
+  # Row 2 (slots 9-17): Healing/support potions
+  # "instant_health": 9
+  # "splash_healing": 10
+  # "lingering_strength": 11
+  
+  # Row 3 (slots 18-26): Movement/utility potions
+  # "super_speed": 18
+  # "soul_speed": 19
+  # "night_vision": 20
+  # "invisibility": 21
+  
+  # Row 4 (slots 27-35): Special/legendary potions
+  # "alchemist_brew": 27
+  # "ender_shift": 28
+  # "netherite_defense": 29
+  # "echo_resonance": 30

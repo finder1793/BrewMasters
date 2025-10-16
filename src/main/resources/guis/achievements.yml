@@ -1,0 +1,177 @@
+# Achievements GUI Configuration
+# Display player brewing achievements
+
+# GUI Settings
+gui:
+  title: "<gradient:gold:yellow>🏆 Achievements</gradient>"
+  size: 54
+  items-per-page: 28
+
+# Background filler
+filler:
+  enabled: true
+  material: GRAY_STAINED_GLASS_PANE
+  name: " "
+  custom-model-data: 0
+
+# Unlocked achievement
+unlocked:
+  name: "<gradient:gold:yellow>{achievement_name}</gradient>"
+  lore:
+    - "<gray>{achievement_description}"
+    - ""
+    - "<green>✓ Unlocked!"
+    - "<gray>Progress: <white>{progress}<gray>/<white>{target}"
+  glow: true
+  custom-model-data: 0
+
+# Locked achievement
+locked:
+  name: "<dark_gray>{achievement_name}"
+  lore:
+    - "<gray>{achievement_description}"
+    - ""
+    - "<red>✗ Locked"
+    - "<gray>Progress: <white>{progress}<gray>/<white>{target}"
+    - ""
+    - "<#FFD700>Keep brewing to unlock!"
+  glow: false
+  custom-model-data: 0
+
+# Hidden achievement (not yet visible to player)
+hidden:
+  material: BARRIER
+  name: "<dark_gray>??? Hidden Achievement"
+  lore:
+    - "<gray>This achievement is hidden"
+    - ""
+    - "<dark_gray>Complete more achievements to reveal!"
+  glow: false
+  custom-model-data: 0
+
+# Visibility settings
+visibility:
+  # Hide achievements the player hasn't unlocked
+  hide-locked: false
+  
+  # Hide achievements that are marked as "secret"
+  hide-secret: true
+  
+  # Show achievement progress even when locked
+  show-progress-when-locked: true
+
+# Navigation
+navigation:
+  previous-page:
+    slot: 45
+    material: ARROW
+    name: "<yellow>← Previous Page"
+    lore:
+      - "<gray>Go to page {previous_page}"
+    custom-model-data: 0
+  
+  next-page:
+    slot: 53
+    material: ARROW
+    name: "<yellow>Next Page →"
+    lore:
+      - "<gray>Go to page {next_page}"
+    custom-model-data: 0
+  
+  current-page:
+    slot: 49
+    material: BOOK
+    name: "<gradient:gold:yellow>Page {current_page}/{total_pages}</gradient>"
+    lore:
+      - "<gray>Unlocked: <white>{unlocked_count}<gray>/<white>{total_count}"
+      - ""
+      - "<aqua>{percentage}%<gray> Complete"
+    custom-model-data: 0
+  
+  close:
+    slot: 50
+    material: BARRIER
+    name: "<red>Close"
+    lore:
+      - "<gray>Close achievements"
+    custom-model-data: 0
+  
+  recipes:
+    enabled: true
+    slot: 48
+    material: BREWING_STAND
+    name: "<gradient:aqua:blue>📖 Recipe Book</gradient>"
+    lore:
+      - "<gray>View your discovered recipes"
+      - ""
+      - "<green>Click to open!"
+    custom-model-data: 0
+    permission: "brewmasters.gui.recipes"  # Optional permission
+
+# Sounds
+sounds:
+  open: BLOCK_CHEST_OPEN
+  close: BLOCK_CHEST_CLOSE
+  click: UI_BUTTON_CLICK
+  page-turn: ITEM_BOOK_PAGE_TURN
+  locked: ENTITY_VILLAGER_NO
+
+# Page permissions (optional)
+page-permissions:
+  enabled: false
+  # Example:
+  # "2": "brewmasters.achievements.page2"
+
+# Per-page item limits (optional - set different limits for each page)
+per-page-limits:
+  enabled: false
+  
+  # Format: page_number: max_items
+  # Examples:
+  # "1": 20    # Page 1 shows 20 achievements
+  # "2": 15    # Page 2 shows 15 achievements
+  # "3": 10    # Page 3 shows 10 achievements
+
+# Achievement page assignments (optional - assign specific achievements to specific pages)
+achievement-page-assignments:
+  enabled: false
+  
+  # Format: achievement_id: page_number
+  # Real examples from your config:
+  # "first_discovery": 1        # Starter achievements on page 1
+  # "first_brew": 1
+  # "recipe_collector_5": 1
+  # "brewing_apprentice": 1
+  
+  # "recipe_collector_10": 2    # Intermediate achievements on page 2
+  # "brewing_journeyman": 2
+  # "first_chain": 2
+  
+  # "master_brewer": 3          # Master achievements on page 3
+  # "chain_master": 3
+
+# Achievement slot assignments (optional - assign achievements to specific slots)
+achievement-slot-assignments:
+  enabled: false
+  
+  # Format: achievement_id: slot_number
+  # Real examples - create a featured layout:
+  # "master_brewer": 13         # Center slot (featured)
+  # "chain_master": 12          # Left of center
+  # "recipe_collector_10": 14   # Right of center
+  
+  # Organize by type:
+  # Discovery achievements (Row 1, slots 0-8):
+  # "first_discovery": 0
+  # "recipe_collector_5": 1
+  # "recipe_collector_10": 2
+  # "master_brewer": 4          # Center of row
+  
+  # Brewing achievements (Row 2, slots 9-17):
+  # "first_brew": 9
+  # "brewing_apprentice": 10
+  # "brewing_journeyman": 11
+  
+  # Chain achievements (Row 3, slots 18-26):
+  # "first_chain": 18
+  # "chain_master": 19

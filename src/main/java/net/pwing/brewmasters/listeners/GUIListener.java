@@ -4,7 +4,8 @@ import net.pwing.brewmasters.BrewMasters;
 import net.pwing.brewmasters.gui.AchievementsGUI;
 import net.pwing.brewmasters.gui.RecipeBookGUI;
 import net.pwing.brewmasters.gui.RecipeDetailsGUI;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -110,7 +111,7 @@ public class GUIListener implements Listener {
      */
     public void openRecipeBook(Player player) {
         if (!plugin.getDiscoveryManager().isDiscoveryEnabled()) {
-            player.sendMessage(ChatColor.RED + "Recipe discovery is not enabled on this server.");
+            player.sendMessage(Component.text("Recipe discovery is not enabled on this server.", NamedTextColor.RED));
             return;
         }
 
@@ -131,7 +132,7 @@ public class GUIListener implements Listener {
      */
     public void openAchievements(Player player) {
         if (!plugin.getAchievementManager().isAchievementsEnabled()) {
-            player.sendMessage(ChatColor.RED + "Achievements are not enabled on this server.");
+            player.sendMessage(Component.text("Achievements are not enabled on this server.", NamedTextColor.RED));
             return;
         }
 

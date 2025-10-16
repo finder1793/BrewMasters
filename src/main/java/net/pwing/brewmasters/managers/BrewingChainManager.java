@@ -3,7 +3,9 @@ package net.pwing.brewmasters.managers;
 import net.pwing.brewmasters.BrewMasters;
 import net.pwing.brewmasters.models.BrewingChain;
 import net.pwing.brewmasters.models.PlayerData;
-import org.bukkit.ChatColor;
+import net.pwing.brewmasters.utils.TextUtils;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
@@ -30,6 +32,13 @@ public class BrewingChainManager {
      * Load brewing chains from configuration
      */
     public void loadConfiguration() {
+        loadChains();
+    }
+    
+    /**
+     * Load chains (public for reload)
+     */
+    public void loadChains() {
         chains.clear();
         recipeToChains.clear();
 
@@ -111,8 +120,6 @@ public class BrewingChainManager {
         if (affectedChains.isEmpty()) {
             return;
         }
-
-        PlayerData playerData = plugin.getPlayerDataManager().getPlayerData(player);
         
         for (String chainId : affectedChains) {
             BrewingChain chain = chains.get(chainId);
@@ -174,9 +181,11 @@ public class BrewingChainManager {
         playerData.completeChain(chain.getId());
 
         // Notify player
-        player.sendMessage(ChatColor.GOLD + "🎉 Chain Completed: " + ChatColor.YELLOW + chain.getName());
+        player.sendMessage(TextUtils.miniMessage(
+            "<gradient:gold:yellow>🎉 Chain Completed:</gradient> "
+        ).append(TextUtils.parseAuto(chain.getName())));
         if (chain.getDescription() != null) {
-            player.sendMessage(ChatColor.GRAY + chain.getDescription());
+            player.sendMessage(Component.text(chain.getDescription(), NamedTextColor.GRAY));
         }
 
         // Trigger achievement if applicable
@@ -197,7 +206,7 @@ public class BrewingChainManager {
         }
 
         if (reward.getMessage() != null && !reward.getMessage().isEmpty()) {
-            player.sendMessage(ChatColor.translateAlternateColorCodes('&', reward.getMessage()));
+            player.sendMessage(TextUtils.parseAuto(reward.getMessage()));
         }
     }
 
@@ -210,18 +219,25 @@ public class BrewingChainManager {
         int completedSteps = completed.size();
         int totalSteps = chain.getSteps().size();
 
-        player.sendMessage(ChatColor.GREEN + "Chain Progress: " + ChatColor.YELLOW + chain.getName());
-        player.sendMessage(ChatColor.GRAY + "Completed: " + completedSteps + "/" + totalSteps + 
-                          " (" + String.format("%.1f%%", progress * 100) + ")");
+        player.sendMessage(TextUtils.miniMessage(
+            "<gradient:green:lime>⛓ Chain Progress:</gradient> "
+        ).append(TextUtils.parseAuto(chain.getName())));
+        player.sendMessage(TextUtils.miniMessage(
+            "<gray>Completed: <white>" + completedSteps + "<gray>/" + totalSteps + 
+            " <dark_gray>(" + String.format("%.1f%%", progress * 100) + ")"
+        ));
 
         // Show next step if not completed
         if (progress < 1.0) {
             BrewingChain.ChainStep nextStep = chain.getNextStep(completed);
             if (nextStep != null) {
                 String recipeName = getRecipeName(nextStep.getRecipeId());
-                player.sendMessage(ChatColor.AQUA + "Next: " + ChatColor.WHITE + recipeName);
+                player.sendMessage(
+                    Component.text("Next: ", NamedTextColor.AQUA)
+                        .append(Component.text(recipeName, NamedTextColor.WHITE))
+                );
                 if (nextStep.getDescription() != null) {
-                    player.sendMessage(ChatColor.GRAY + "  " + nextStep.getDescription());
+                    player.sendMessage(Component.text("  " + nextStep.getDescription(), NamedTextColor.GRAY));
                 }
             }
         }
@@ -233,7 +249,7 @@ public class BrewingChainManager {
     private String getRecipeName(String recipeId) {
         var recipe = plugin.getRecipeManager().getRecipe(recipeId);
         if (recipe != null && recipe.getResultName() != null) {
-            return ChatColor.stripColor(recipe.getResultName());
+            return TextUtils.stripColor(recipe.getResultName());
         }
         return recipeId;
     }

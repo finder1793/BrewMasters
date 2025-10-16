@@ -1,0 +1,346 @@
+# BrewMasters GUI Configuration
+# Customize all GUI elements including titles, items, colors, and custom model data
+# Supports MiniMessage format for gradients, rainbow text, and hex colors!
+
+# Recipe Book GUI Configuration
+recipe-book:
+  # GUI Title (supports MiniMessage)
+  title: "<gradient:aqua:blue>📖 Recipe Book</gradient>"
+  
+  # GUI Size (must be multiple of 9, max 54)
+  size: 54
+  
+  # Items per page (max 28 for navigation space)
+  items-per-page: 28
+  
+  # Background/filler item
+  filler:
+    enabled: true
+    material: GRAY_STAINED_GLASS_PANE
+    name: " "  # Empty name
+    custom-model-data: 0  # 0 = no custom model
+  
+  # Discovered recipe item
+  discovered-recipe:
+    # The actual potion will be shown, these are fallback settings
+    name: "<gradient:green:lime>{recipe_name}</gradient>"
+    lore:
+      - "<gray>Click to view recipe details"
+      - ""
+      - "<aqua>Brewing Time: <white>{brew_time}s"
+      - "<gold>Type: <yellow>{potion_type}"
+    glow: true  # Add enchantment glow
+  
+  # Locked/undiscovered recipe item
+  locked-recipe:
+    material: BARRIER
+    name: "<dark_gray>??? Locked Recipe"
+    lore:
+      - "<gray>You haven't discovered this recipe yet"
+      - ""
+      - "<#FFD700>Explore and brew to discover!"
+    custom-model-data: 0
+    glow: false
+  
+  # Navigation items
+  navigation:
+    previous-page:
+      slot: 45
+      material: ARROW
+      name: "<yellow>← Previous Page"
+      lore:
+        - "<gray>Go to page {previous_page}"
+      custom-model-data: 0
+    
+    next-page:
+      slot: 53
+      material: ARROW
+      name: "<yellow>Next Page →"
+      lore:
+        - "<gray>Go to page {next_page}"
+      custom-model-data: 0
+    
+    current-page:
+      slot: 49
+      material: BOOK
+      name: "<gradient:gold:yellow>Page {current_page}/{total_pages}</gradient>"
+      lore:
+        - "<gray>Discovered: <white>{discovered_count}<gray>/<white>{total_count}"
+        - ""
+        - "<aqua>{percentage}%<gray> Complete"
+      custom-model-data: 0
+    
+    close:
+      slot: 50
+      material: BARRIER
+      name: "<red>Close"
+      lore:
+        - "<gray>Close the recipe book"
+      custom-model-data: 0
+    
+    achievements:
+      enabled: true
+      slot: 48
+      material: NETHER_STAR
+      name: "<gradient:gold:yellow>🏆 Achievements</gradient>"
+      lore:
+        - "<gray>View your brewing achievements"
+        - ""
+        - "<green>Click to open!"
+      custom-model-data: 0
+
+# Recipe Details GUI Configuration
+recipe-details:
+  # GUI Title (supports MiniMessage, {recipe_name} placeholder)
+  title: "<gradient:dark_blue:blue>Recipe: {recipe_name}</gradient>"
+  
+  # GUI Size
+  size: 54
+  
+  # Background/filler item
+  filler:
+    enabled: true
+    material: BLACK_STAINED_GLASS_PANE
+    name: " "
+    custom-model-data: 0
+  
+  # Layout configuration (slot positions)
+  layout:
+    # Result potion position
+    result-slot: 22
+    
+    # Base potion position
+    base-slot: 20
+    
+    # Ingredient position
+    ingredient-slot: 24
+    
+    # Brewing stand visualization
+    brewing-stand-slot: 13
+    
+    # Process arrows
+    arrow-1-slot: 21
+    arrow-2-slot: 23
+    arrow-3-slot: 31
+    
+    # Information panels
+    effects-slot: 15
+    conditions-slot: 33
+    type-info-slot: 11
+  
+  # Base potion display item
+  base-potion:
+    name: "<gradient:yellow:gold>Base Potion</gradient>"
+    lore:
+      - "<gray>{base_material}"
+      - ""
+      - "<gray>This is the base potion"
+      - "<gray>required for this recipe"
+  
+  # Ingredient display item
+  ingredient:
+    name: "<gradient:green:lime>Ingredient</gradient>"
+    lore:
+      - "<gray>{ingredient_name}"
+      - ""
+      - "<gray>This ingredient is added"
+      - "<gray>to the base potion"
+    # Fallback if ingredient can't provide item
+    fallback-material: GLOWSTONE_DUST
+    fallback-name: "<red>Unknown Ingredient"
+  
+  # Brewing stand visualization
+  brewing-stand:
+    material: BREWING_STAND
+    name: "<gradient:gold:orange>⚗ Brewing Process</gradient>"
+    lore:
+      - "<gray>1. Place base potion in brewing stand"
+      - "<gray>2. Add ingredient to top slot"
+      - "<gray>3. Add blaze powder as fuel"
+      - "<gray>4. Wait for brewing to complete"
+      - ""
+      - "<yellow>Brew Time: <white>{brew_time} seconds"
+    custom-model-data: 0
+  
+  # Process arrows
+  process-arrows:
+    material: ARROW
+    step-1:
+      name: "<green>Step 1"
+      lore:
+        - "<gray>Place base potion"
+    step-2:
+      name: "<green>Step 2"
+      lore:
+        - "<gray>Add ingredient"
+    step-3:
+      name: "<green>Step 3"
+      lore:
+        - "<gray>Result!"
+    custom-model-data: 0
+  
+  # Effects information panel
+  effects-panel:
+    material: GLOWSTONE_DUST
+    name: "<gradient:light_purple:purple>✨ Potion Effects</gradient>"
+    lore-format:
+      header:
+        - "<gray>This potion grants:"
+      effect-line: "<gray>• <white>{effect_name} {level} <dark_gray>({duration})"
+      no-effects: "<gray>No special effects"
+    custom-model-data: 0
+  
+  # Conditions information panel
+  conditions-panel:
+    material: REDSTONE
+    name: "<gradient:red:dark_red>⚠ Brewing Conditions</gradient>"
+    lore-format:
+      header:
+        - "<gray>This recipe requires:"
+      condition-line: "<gray>• {condition_description}"
+      no-conditions: "<green>No special conditions required"
+    custom-model-data: 0
+  
+  # Recipe type information
+  type-panel:
+    name: "<gradient:aqua:blue>ℹ Recipe Type</gradient>"
+    lore:
+      - "<gray>Type: <white>{potion_type}"
+      - ""
+      - "{glowing_text}"
+      - "{custom_model_text}"
+    glowing-text: "<yellow>✨ Glowing Effect"
+    custom-model-text: "<gray>Custom Model: <white>{model_data}"
+    # Material changes based on potion type
+    materials:
+      NORMAL: POTION
+      SPLASH: SPLASH_POTION
+      LINGERING: LINGERING_POTION
+    custom-model-data: 0
+  
+  # Navigation items
+  navigation:
+    back:
+      slot: 45
+      material: ARROW
+      name: "<yellow>← Back to Recipe Book"
+      lore:
+        - "<gray>Return to the recipe list"
+      custom-model-data: 0
+    
+    close:
+      slot: 49
+      material: BARRIER
+      name: "<red>Close"
+      lore:
+        - "<gray>Close the recipe book"
+      custom-model-data: 0
+
+# Achievements GUI Configuration
+achievements:
+  # GUI Title
+  title: "<gradient:gold:yellow>🏆 Achievements</gradient>"
+  
+  # GUI Size
+  size: 54
+  
+  # Items per page
+  items-per-page: 28
+  
+  # Background/filler
+  filler:
+    enabled: true
+    material: GRAY_STAINED_GLASS_PANE
+    name: " "
+    custom-model-data: 0
+  
+  # Unlocked achievement item
+  unlocked:
+    # Icon from achievement config will be used
+    name: "<gradient:gold:yellow>{achievement_name}</gradient>"
+    lore:
+      - "<gray>{achievement_description}"
+      - ""
+      - "<green>✓ Unlocked!"
+      - "<gray>Progress: <white>{progress}<gray>/<white>{target}"
+    glow: true
+    custom-model-data: 0
+  
+  # Locked achievement item
+  locked:
+    name: "<dark_gray>{achievement_name}"
+    lore:
+      - "<gray>{achievement_description}"
+      - ""
+      - "<red>✗ Locked"
+      - "<gray>Progress: <white>{progress}<gray>/<white>{target}"
+      - ""
+      - "<#FFD700>Keep brewing to unlock!"
+    glow: false
+    custom-model-data: 0
+  
+  # Navigation (same structure as recipe-book)
+  navigation:
+    previous-page:
+      slot: 45
+      material: ARROW
+      name: "<yellow>← Previous Page"
+      lore:
+        - "<gray>Go to page {previous_page}"
+      custom-model-data: 0
+    
+    next-page:
+      slot: 53
+      material: ARROW
+      name: "<yellow>Next Page →"
+      lore:
+        - "<gray>Go to page {next_page}"
+      custom-model-data: 0
+    
+    current-page:
+      slot: 49
+      material: BOOK
+      name: "<gradient:gold:yellow>Page {current_page}/{total_pages}</gradient>"
+      lore:
+        - "<gray>Unlocked: <white>{unlocked_count}<gray>/<white>{total_count}"
+        - ""
+        - "<aqua>{percentage}%<gray> Complete"
+      custom-model-data: 0
+    
+    close:
+      slot: 50
+      material: BARRIER
+      name: "<red>Close"
+      lore:
+        - "<gray>Close achievements"
+      custom-model-data: 0
+    
+    recipes:
+      enabled: true
+      slot: 48
+      material: BREWING_STAND
+      name: "<gradient:aqua:blue>📖 Recipe Book</gradient>"
+      lore:
+        - "<gray>View your discovered recipes"
+        - ""
+        - "<green>Click to open!"
+      custom-model-data: 0
+
+# Global GUI Settings
+global:
+  # Sound effects
+  sounds:
+    open-gui: BLOCK_CHEST_OPEN
+    close-gui: BLOCK_CHEST_CLOSE
+    click-item: UI_BUTTON_CLICK
+    page-turn: ITEM_BOOK_PAGE_TURN
+    error: ENTITY_VILLAGER_NO
+  
+  # Click actions
+  prevent-item-pickup: true
+  close-on-click-outside: true
+  
+  # Animations (future feature)
+  animations:
+    enabled: false
+    page-transition: FADE
